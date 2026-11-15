@@ -1,0 +1,195 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>FrameLab</title>
+<style>
+:root{--bg:#eceff3;--sf:#f9fafb;--ink:#14202e;--mut:#5b6877;--ln:#c9d1db;--hit:#0a6c8f;--hitbg:#d6eef6;--flt:#b4530a;--fltbg:#fbe6d2;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--sans:"Avenir Next","Segoe UI",system-ui,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1720;--sf:#16212d;--ink:#e6edf5;--mut:#93a1b1;--ln:#2a3a4b;--hit:#5cc4e6;--hitbg:#12384a;--flt:#f2a25c;--fltbg:#47290d}}
+:root[data-theme="dark"]{--bg:#0f1720;--sf:#16212d;--ink:#e6edf5;--mut:#93a1b1;--ln:#2a3a4b;--hit:#5cc4e6;--hitbg:#12384a;--flt:#f2a25c;--fltbg:#47290d}
+*,*::before,*::after{box-sizing:inherit}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);overflow-x:hidden}
+header,main{max-width:1000px;margin:0 auto;padding:0 20px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 28px;padding-top:24px;padding-bottom:16px;border-bottom:2px solid var(--ink)}
+h1{font:700 1.7rem/1 var(--mono);margin:0;letter-spacing:-.03em}
+nav{display:flex;gap:4px}nav button{font:inherit;background:none;border:0;border-bottom:3px solid transparent;color:var(--mut);padding:6px 10px;cursor:pointer}
+nav button[aria-current=page]{color:var(--ink);border-color:var(--hit);font-weight:600}
+h2{font:600 1.15rem/1.3 var(--sans);margin:28px 0 10px}p{margin:0 0 10px;max-width:68ch}.mut{color:var(--mut);font-size:.9rem}
+:focus-visible{outline:3px solid var(--hit);outline-offset:2px}
+.panel{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:16px;margin-top:16px}
+.controls{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:end}
+label{display:grid;gap:4px;font-size:.85rem;color:var(--mut)}
+input,select{font:1rem var(--mono);padding:9px 10px;background:var(--bg);color:var(--ink);border:1px solid var(--ln);border-radius:4px;width:100%}
+button.b{font:600 .95rem var(--sans);padding:9px 14px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:4px;cursor:pointer}
+button.g{background:none;color:var(--ink);border-color:var(--ln)}button:disabled{opacity:.4;cursor:not-allowed}
+#err{color:var(--flt);font-weight:600;min-height:1.4em;margin:8px 0 0}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.bar label{display:flex;align-items:center;gap:8px}.bar input[type=range]{width:120px;padding:0}
+progress{width:100%;height:6px;accent-color:var(--hit);margin-top:12px}
+.stage{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-top:18px}
+.cur{width:84px;text-align:center;font:700 2.4rem/1 var(--mono);padding:14px 0;border:2px dashed var(--ln);border-radius:6px}
+.cur small{display:block;font:500 .75rem var(--sans);color:var(--mut);margin-bottom:6px}
+.cur.hit{border:2px solid var(--hit);background:var(--hitbg)}.cur.flt{border:2px solid var(--flt);background:var(--fltbg)}
+.frames{display:flex;gap:10px;flex-wrap:wrap}
+.slot{position:relative;width:84px;height:104px;border:2px solid var(--ink);border-radius:4px;display:grid;place-items:center;font:700 2rem var(--mono);background:var(--sf);transition:background .3s,border-color .3s}
+.slot i{position:absolute;top:4px;left:6px;font:500 .7rem var(--mono);color:var(--mut);font-style:normal}
+.slot s{position:absolute;bottom:4px;font:600 .72rem var(--mono);color:var(--flt);text-decoration:line-through;text-decoration-thickness:1px}
+.slot.empty{border-style:dashed;color:var(--ln)}
+.slot.in{border-color:var(--flt);background:var(--fltbg);animation:drop .45s cubic-bezier(.3,1.5,.5,1)}
+.slot.keep{border-color:var(--hit);background:var(--hitbg);animation:pulse .4s ease}
+@keyframes drop{from{transform:translateY(-22px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pulse{50%{transform:scale(1.05)}}
+.why{margin-top:16px;padding:12px 14px;border-left:4px solid var(--ln);background:var(--bg);min-height:3.4em}
+.why.hit{border-color:var(--hit)}.why.flt{border-color:var(--flt)}
+.tl{display:flex;gap:4px;overflow-x:auto;padding:8px 0 4px;margin-top:12px}
+.tl button{flex:0 0 38px;height:44px;font:600 .95rem var(--mono);border:1px solid var(--ln);background:var(--sf);color:var(--mut);border-radius:3px;cursor:pointer;border-bottom-width:4px;transition:transform .2s}
+.tl .hit{border-bottom-color:var(--hit);color:var(--ink)}.tl .flt{border-bottom-color:var(--flt);color:var(--ink)}
+.tl .on{border-color:var(--ink);transform:translateY(-4px);background:var(--bg);color:var(--ink)}.tl .fut{opacity:.55}
+.stats{display:flex;gap:22px;flex-wrap:wrap;margin-top:12px;font:600 1rem var(--mono)}.stats span{color:var(--mut);font:400 .8rem var(--sans);display:block}
+table{border-collapse:collapse;width:100%;font-size:.95rem}th,td{text-align:right;padding:8px 10px;border-bottom:1px solid var(--ln)}th:first-child,td:first-child{text-align:left}
+.wrap{overflow-x:auto}.row{display:grid;grid-template-columns:96px 1fr 40px;gap:10px;align-items:center;margin:8px 0;font:.9rem var(--mono)}
+.trk{height:20px;background:var(--bg);border-radius:3px}.fill{height:100%;background:var(--flt);border-radius:3px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.best{color:var(--hit);font-weight:700}[hidden]{display:none!important}
+@media(max-width:720px){.controls{grid-template-columns:1fr 1fr}.controls label:first-child{grid-column:1/-1}.slot,.cur{width:68px}.slot{height:90px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=IBM+Plex+Mono:wght@400;600&display=swap"><style>
+:root:root:root{--bg:#0f2f94;--sf:rgba(255,255,255,.06);--ink:#f2f5ff;--mut:#a8b8ee;--ln:rgba(255,255,255,.3);--hit:#7df0ff;--hitbg:rgba(125,240,255,.14);--flt:#ffd23f;--fltbg:rgba(255,210,63,.15);--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;--sans:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif}
+body{background:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px) 0 0/28px 28px,var(--bg);background-attachment:fixed}
+header{display:block;border-bottom:1px dashed var(--ln);padding-bottom:6px}
+h1{font:800 clamp(2.8rem,9vw,5.6rem)/.95 var(--sans);letter-spacing:-.05em;animation:rise 1s cubic-bezier(.7,0,.2,1) both}
+@keyframes rise{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}
+nav{margin-top:10px}nav button{font:500 1rem var(--mono);color:var(--mut)}nav button[aria-current=page]{color:var(--ink);border-color:var(--flt)}
+h2{font:800 clamp(1.7rem,4.5vw,2.6rem)/1.05 var(--sans);letter-spacing:-.03em;margin:34px 0 10px}
+.panel{border-radius:0;position:relative;margin-top:22px}
+.panel::before{content:"";position:absolute;inset:-5px;pointer-events:none;background:linear-gradient(var(--ink),var(--ink)) 0 0/14px 1px,linear-gradient(var(--ink),var(--ink)) 0 0/1px 14px,linear-gradient(var(--ink),var(--ink)) 100% 100%/14px 1px,linear-gradient(var(--ink),var(--ink)) 100% 100%/1px 14px;background-repeat:no-repeat}
+input,select{background:rgba(0,0,0,.28);border-radius:0;color:var(--ink)}
+button.b{background:var(--flt);border-color:var(--flt);color:#0b1f66;border-radius:0;font-weight:800}button.b.g{background:none;color:var(--ink);border-color:var(--ln)}
+.slot{width:96px;height:132px;border:1.5px solid var(--ink);border-radius:0;background:rgba(0,0,0,.22);font-size:2.7rem}.slot.empty{border-style:dashed}
+.slot.in{border-color:var(--flt);background:var(--fltbg);animation:drop .8s ease-out}.slot.keep{border-color:var(--hit);background:var(--hitbg);animation:pulse .7s ease-out}
+@keyframes drop{from{box-shadow:0 0 0 0 rgba(255,210,63,.7)}to{box-shadow:0 0 0 24px rgba(255,210,63,0)}}
+@keyframes pulse{from{box-shadow:0 0 0 0 rgba(125,240,255,.7)}to{box-shadow:0 0 0 24px rgba(125,240,255,0)}}
+.cur{width:96px;border-radius:0;border-color:var(--ln)}.cur.hit{border-color:var(--hit);background:var(--hitbg)}.cur.flt{border-color:var(--flt);background:var(--fltbg)}
+.why{background:rgba(0,0,0,.24)}.tl button{border-radius:0;background:rgba(0,0,0,.2)}.tl .on{background:var(--ink);color:var(--bg)}
+.tok,.ghost{position:fixed;z-index:9;pointer-events:none;display:grid;place-items:center;align-content:center;font:700 2.7rem var(--mono)}
+.tok{background:var(--flt);color:#0b1f66}.tok.h{background:var(--hit)}.ghost{color:var(--flt)}.ghost small{font:600 .7rem var(--mono)}
+#tr,#crv{width:100%;height:auto;display:block;margin-top:10px;color:var(--mut)}
+.crv{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-dasharray:1;animation:draw 1.5s cubic-bezier(.5,0,.2,1) both}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:6px 24px;padding-top:18px;border-bottom:1px solid var(--ln)}
+h1{font-size:clamp(2.2rem,6vw,3.4rem)}nav{margin:0}h2{font-size:clamp(1.5rem,3.5vw,2rem);margin:24px 0 6px}
+.panel{background:rgba(6,22,80,.5);border:1px solid var(--ln)}.panel::before{display:none}#stagebox{padding:22px}
+progress{appearance:none;-webkit-appearance:none;height:4px;border:0;background:rgba(255,255,255,.18);display:block}
+progress::-webkit-progress-bar{background:rgba(255,255,255,.18)}progress::-webkit-progress-value{background:var(--flt);transition:width .4s}progress::-moz-progress-bar{background:var(--flt)}
+.stage{display:grid;grid-template-columns:auto minmax(0,auto) 1fr;align-items:center;gap:0;margin-top:30px}
+.cur{position:relative;height:150px;display:grid;place-content:center;margin-right:40px;width:96px}.cur small{margin-bottom:8px}
+.cur::after{content:"\2192";position:absolute;right:-34px;top:50%;transform:translateY(-50%);color:var(--mut);font:1.5rem var(--mono)}
+.frames{gap:0;flex-wrap:nowrap;overflow-x:auto;border:2px solid var(--ink);background:rgba(0,0,0,.3);padding:0;position:relative}
+.slot{width:112px;height:150px;border:0;border-right:1px dashed var(--ln);font-size:3.1rem;background:none;transition:background .35s,color .35s}
+.slot:last-child{border-right:0}.slot.empty{border-style:solid;border-width:0 1px 0 0;border-right-style:dashed}.slot:last-child.empty{border-width:0}
+.slot i{top:8px;left:10px;font-size:.78rem}.slot s{bottom:8px;font-size:.85rem}
+.slot.in{background:var(--flt);color:#0b1f66}.slot.keep{background:var(--hit);color:#0b1f66}.slot.in i,.slot.keep i,.slot.in s{color:#0b1f66}
+.disk{margin-left:28px;padding-left:20px;border-left:1px dashed var(--ln);align-self:stretch;min-width:110px}.disk small{color:var(--mut);display:block;margin-bottom:8px}
+#dl{display:flex;flex-wrap:wrap;gap:6px}#dl span{font:600 1rem var(--mono);color:var(--flt);border:1px solid var(--flt);padding:2px 9px}#dl span.new{animation:pop .5s cubic-bezier(.3,1.5,.5,1)}#dl em{color:var(--mut);font-size:.85rem}
+@keyframes pop{from{transform:translateY(-14px) scale(.6);opacity:0}}
+.why{font-size:1.08rem;padding:14px 16px;margin-top:22px}.why.hit::before{content:"Hit  ";color:var(--hit);font-weight:800}.why.flt::before{content:"Fault  ";color:var(--flt);font-weight:800}
+.tl button{flex:0 0 42px;height:48px}.tl .hit{background:var(--hitbg);border-color:var(--hit)}.tl .flt{background:var(--fltbg);border-color:var(--flt)}.tl .on{background:var(--ink);color:var(--bg)}
+.stats{gap:0;margin-top:18px;font-size:2rem}.stats div{padding:0 26px;border-left:1px solid var(--ln)}.stats div:first-child{padding-left:0;border:0}.stats span{font-size:.85rem}
+@media(max-width:720px){.stage{grid-template-columns:auto minmax(0,1fr)}.cur{width:64px;height:110px;margin-right:34px}.slot{width:68px;height:110px;font-size:2rem}.disk{grid-column:1/-1;margin:18px 0 0;padding:14px 0 0;border-left:0;border-top:1px dashed var(--ln)}.stats{font-size:1.5rem}.stats div{padding:0 14px}}
+</style></head><body>
+<header><h1>FrameLab</h1><nav aria-label="Sections"><button data-v="sim">Simulator</button><button data-v="cmp">Compare</button><button data-v="learn">Learn</button></nav></header>
+<main>
+<section id="sim"><h2>Page replacement simulator</h2>
+<p class="mut">Enter the pages a program requests, choose how many memory frames it gets, and step through what each algorithm does.</p>
+<div class="panel"><div class="controls">
+<label>Reference string<input id="ref" value="7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2" spellcheck="false" aria-describedby="err"></label>
+<label>Frames<input id="n" type="number" min="1" max="10" value="3"></label>
+<label>Algorithm<select id="algo"><option value="FIFO">FIFO</option><option value="LRU">LRU</option><option value="OPT">Optimal</option></select></label>
+<button class="b" id="run">Run simulation</button></div><p id="err" role="alert"></p></div>
+<div class="panel" id="stagebox" hidden>
+<div class="bar"><button class="b g" id="prev" aria-label="Previous step">Back</button><button class="b" id="play">Play</button><button class="b g" id="next" aria-label="Next step">Next</button><button class="b g" id="reset">Reset</button>
+<label>Speed<input id="spd" type="range" min="1" max="6" value="3"></label><span class="mut" id="pos" aria-live="polite"></span></div>
+<progress id="prog" value="0" max="1" aria-label="Simulation progress"></progress>
+<div class="stage"><div class="cur" id="cur"><small>Requested</small><span id="cp">–</span></div><div class="frames" id="frames" role="list" aria-label="Memory frames"></div></div>
+<div class="why" id="why" aria-live="polite">Press Next or Play to start.</div>
+<div class="tl" id="tl" aria-label="Reference timeline"></div>
+<div class="stats" id="stats"></div></div></section>
+<section id="cmp" hidden><h2>Algorithm comparison</h2><p class="mut" id="cmpnote"></p><div class="panel"><div class="wrap"><table id="tbl"></table></div></div><div class="panel"><b>Page faults (fewer is better)</b><div id="bars"></div></div></section>
+<section id="learn" hidden><h2>Learn the three algorithms</h2>
+<div class="panel"><p><b>FIFO</b> evicts the page that has been in memory longest. It is simple, but can evict a page that is used constantly. Time O(1) per reference with a queue, O(f) with a frame scan.</p>
+<p><b>LRU</b> evicts the page unused for the longest time, betting that recent use predicts future use. It avoids Belady's anomaly. Time O(f) per reference with a scan; O(1) with a hash map and linked list.</p>
+<p><b>Optimal</b> evicts the page whose next use is farthest away. It needs the future, so it cannot run in a real OS, but it gives the minimum possible faults and is the benchmark for the others. Time O(f·n) per reference as written here.</p>
+<p class="mut">f is the number of frames and n the length of the reference string. A replacement happens only when memory is full; loading into a free frame is a fault but not a replacement.</p></div></section>
+</main>
+<script>
+function parse(t){const p=t.trim().split(/[\s,]+/).filter(Boolean);if(!p.length)return{e:'Enter at least one page number, for example 7, 0, 1.'};
+for(const k of p)if(!/^\d{1,3}$/.test(k))return{e:'"'+k+'" is not a valid page. Use whole numbers from 0 to 999, separated by commas or spaces.'};return{r:p.map(Number)}}
+function sim(a,R,n){const F=Array(n).fill(null),ld=Array(n).fill(0),lu=Array(n).fill(0),S=[];let fl=0,rp=0;
+R.forEach((p,i)=>{let k=F.indexOf(p),hit=k>-1,ev=null,why;
+if(hit){lu[k]=i;why='Page '+p+' is already in frame '+(k+1)+', so this is a hit and nothing is evicted.'}
+else{fl++;k=F.indexOf(null);
+if(k>-1)why='Page '+p+' is not in memory. Frame '+(k+1)+' is free, so it loads there (a fault, but no replacement).';
+else{rp++;const nx=F.map(q=>{const j=R.indexOf(q,i+1);return j<0?Infinity:j});k=0;
+for(let m=1;m<n;m++){const b=a=='FIFO'?ld[m]<ld[k]:a=='LRU'?lu[m]<lu[k]:(nx[m]>nx[k]||(nx[m]===Infinity&&nx[k]===Infinity&&ld[m]<ld[k]));if(b)k=m}
+ev=F[k];why='Page '+p+' is missing and memory is full. '+(a=='FIFO'?'FIFO evicts '+ev+', loaded earliest (step '+(ld[k]+1)+').':a=='LRU'?'LRU evicts '+ev+', last used at step '+(lu[k]+1)+', the longest ago.':'Optimal evicts '+ev+' because '+(nx[k]===Infinity?'it is never used again.':'its next use is at step '+(nx[k]+1)+', the farthest ahead.'))}
+F[k]=p;ld[k]=i;lu[k]=i}
+S.push({p,hit,k,ev,F:[...F],why,fl,rp,h:i+1-fl})});
+return{S,fl,rp,h:R.length-fl,n:R.length}}
+/*UI*/
+const $=id=>document.getElementById(id),NM={FIFO:'FIFO',LRU:'LRU',OPT:'Optimal'};
+let R=[],N=3,res=null,i=-1,timer=null;
+function view(v){for(const s of['sim','cmp','learn'])$(s).hidden=s!=v;document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.v==v?'page':'false'));if(v=='cmp')compare();location.hash=v}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>view(b.dataset.v));
+function read(){const p=parse($('ref').value),n=Number($('n').value);
+if(p.e){$('err').textContent=p.e;return false}
+if(!Number.isInteger(n)||n<1||n>10){$('err').textContent='Frames must be a whole number from 1 to 10.';return false}
+$('err').textContent='';R=p.r;N=n;return true}
+function run(){stop();if(!read())return;res=sim($('algo').value,R,N);i=-1;$('stagebox').hidden=false;
+$('frames').innerHTML=Array.from({length:N},(_,k)=>'<div class="slot empty" role="listitem"><i>F'+(k+1)+'</i><b>–</b><s></s></div>').join('');
+$('tl').innerHTML=R.map((p,k)=>'<button data-k="'+k+'" aria-label="Go to step '+(k+1)+', page '+p+'">'+p+'</button>').join('');
+$('tl').onclick=e=>{const b=e.target.closest('button');if(b){stop();go(+b.dataset.k)}};draw(false)}
+function go(k){i=Math.max(-1,Math.min(R.length-1,k));draw(true)}
+function draw(anim){const S=res.S,st=i>=0?S[i]:null,sl=$('frames').children;
+for(let k=0;k<N;k++){const e=sl[k],v=st?st.F[k]:null;e.className='slot'+(v===null?' empty':'');e.querySelector('b').textContent=v===null?'–':v;e.querySelector('s').textContent=st&&st.k==k&&st.ev!==null?st.ev:'';
+if(anim&&st&&st.k==k){void e.offsetWidth;e.classList.add(st.hit?'keep':'in')}}
+$('cp').textContent=st?st.p:'–';$('cur').className='cur'+(st?st.hit?' hit':' flt':'');
+$('why').className='why'+(st?st.hit?' hit':' flt':'');$('why').textContent=st?st.why:'Press Next or Play to start.';
+document.querySelectorAll('#tl button').forEach((b,k)=>{b.className=k>i?'fut':S[k].hit?'hit':'flt';if(k==i){b.classList.add('on');b.scrollIntoView({block:'nearest',inline:'center'})}});
+$('prog').max=R.length;$('prog').value=i+1;$('pos').textContent='Step '+(i+1)+' of '+R.length;
+const c=st||{fl:0,rp:0,h:0};$('stats').innerHTML=[['Faults',c.fl],['Hits',c.h],['Replacements',c.rp]].map(x=>'<div><span>'+x[0]+'</span>'+x[1]+'</div>').join('');
+$('prev').disabled=i<0;$('next').disabled=i>=R.length-1}
+function stop(){clearInterval(timer);timer=null;$('play').textContent='Play'}
+function play(){if(timer)return stop();if(i>=R.length-1)go(-1);$('play').textContent='Pause';
+timer=setInterval(()=>{if(i>=R.length-1)return stop();go(i+1)},[1600,1200,850,550,350,200][$('spd').value-1])}
+$('run').onclick=run;$('play').onclick=play;$('next').onclick=()=>{stop();go(i+1)};$('prev').onclick=()=>{stop();go(i-1)};$('reset').onclick=()=>{stop();go(-1)};
+$('spd').oninput=()=>{if(timer){stop();play()}};$('algo').onchange=()=>{if(!$('stagebox').hidden)run()};
+$('ref').onkeydown=e=>{if(e.key=='Enter')run()};
+function compare(){if(!read()){$('cmpnote').textContent='Fix the input on the Simulator tab to compare algorithms.';$('tbl').innerHTML='';$('bars').innerHTML='';return}
+const o=['FIFO','LRU','OPT'].map(a=>({a,r:sim(a,R,N)})),m=Math.min(...o.map(x=>x.r.fl)),pc=(x,t)=>(100*x/t).toFixed(1)+'%';
+$('cmpnote').textContent=R.length+' references, '+N+' frame'+(N>1?'s':'')+'. Every figure is computed from the simulation runs.';
+$('tbl').innerHTML='<tr><th>Algorithm</th><th>Faults</th><th>Hits</th><th>Fault rate</th><th>Hit rate</th><th>Replacements</th></tr>'+o.map(x=>'<tr><td class="'+(x.r.fl==m?'best':'')+'">'+NM[x.a]+'</td><td>'+x.r.fl+'</td><td>'+x.r.h+'</td><td>'+pc(x.r.fl,R.length)+'</td><td>'+pc(x.r.h,R.length)+'</td><td>'+x.r.rp+'</td></tr>').join('');
+$('bars').innerHTML=o.map(x=>'<div class="row"><span>'+NM[x.a]+'</span><div class="trk"><div class="fill" style="width:0" data-w="'+100*x.r.fl/R.length+'"></div></div><b>'+x.r.fl+'</b></div>').join('');
+requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%')))}
+view(['sim','cmp','learn'].includes(location.hash.slice(1))?location.hash.slice(1):'sim');
+</script>
+<script>
+const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+document.querySelector('#sim h2').textContent='Watch memory decide.';
+document.querySelector('#sim p').textContent='Pages arrive one at a time. When the frames are full, the algorithm must evict one. Step through each decision and see why.';
+$('tl').insertAdjacentHTML('afterend','<svg id="tr" viewBox="0 0 600 130" role="img" aria-label="Cumulative page faults over time"></svg>');
+$('bars').parentElement.insertAdjacentHTML('afterend','<div class="panel"><b>Fault accumulation</b><p class="mut">Each line counts faults as references arrive. Flatter is better.</p><svg id="crv" viewBox="0 0 600 190" role="img" aria-label="Cumulative faults per algorithm"></svg></div>');
+const X=(k,n)=>10+(k+1)/n*580,Y=(v,mx,h)=>h-14-v/Math.max(mx,1)*(h-34);
+const P=(S,h,mx,to)=>'10,'+Y(0,mx,h)+(to>=0?' '+S.slice(0,to+1).map((s,k)=>X(k,S.length)+','+Y(s.fl,mx,h)).join(' '):'');
+function tr(){if(!res)return;const S=res.S,m=res.fl,h=130,e=$('tr');
+if(e._r!==res){e._r=res;e.innerHTML='<line x1="10" x2="590" y1="'+Y(0,m,h)+'" y2="'+Y(0,m,h)+'" stroke="currentColor" opacity=".4"/><polyline fill="none" stroke="currentColor" opacity=".35" stroke-dasharray="2 5" points="'+P(S,h,m,S.length-1)+'"/><polyline id="trp" fill="none" stroke="#ffd23f" stroke-width="2.5" stroke-linejoin="round"/><circle id="trc" r="5" style="transition:transform .5s cubic-bezier(.3,1.35,.5,1)"/><text id="trt" x="12" y="14" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace"></text>'}
+const st=i>=0?S[i]:null;$('trp').setAttribute('points',P(S,h,m,i));
+$('trc').style.transform='translate('+(i<0?10:X(i,S.length))+'px,'+Y(st?st.fl:0,m,h)+'px)';$('trc').setAttribute('fill',st&&st.hit?'#7df0ff':'#ffd23f');
+$('trt').textContent='cumulative faults: '+(st?st.fl:0)+' of '+m}
+function fly(t,txt,cls){const k=document.createElement('div');k.className=cls;k.innerHTML=txt;Object.assign(k.style,{left:t.left+'px',top:t.top+'px',width:t.width+'px',height:t.height+'px'});document.body.appendChild(k);return k}
+function fx(a){if(rm||!a||i<0)return;const st=res.S[i],sl=$('frames').children[st.k],t=sl.getBoundingClientRect(),c=$('cur').getBoundingClientRect();
+const k=fly(t,st.p,'tok'+(st.hit?' h':''));
+k.animate([{transform:'translate('+(c.left-t.left)+'px,'+(c.top-t.top)+'px) scale(.62)'},{transform:'none'}],{duration:st.hit?300:560,easing:'cubic-bezier(.3,1.35,.5,1)'}).onfinish=()=>k.remove();
+if(!st.hit)sl.querySelector('b').animate([{opacity:0},{opacity:1}],{duration:200,delay:400,fill:'backwards'});
+if(st.ev!==null){const g=fly(t,st.ev+'<small>to disk</small>','ghost');g.animate([{transform:'none',opacity:1},{transform:'translate(44px,96px) rotate(10deg)',opacity:0}],{duration:750,easing:'ease-in'}).onfinish=()=>g.remove()}}
+function disk(){if(!$('disk')){document.querySelector('#stagebox .stage').insertAdjacentHTML('beforeend','<div class="disk" id="disk"><small>Evicted to disk</small><div id="dl"></div></div>')}
+const ev=res.S.slice(0,i+1).filter(x=>x.ev!==null).map(x=>x.ev).reverse();$('dl').innerHTML=ev.length?ev.map((p,k)=>'<span'+(k?'':' class="new"')+'>'+p+'</span>').join(''):'<em>Nothing yet. Frames still have room.</em>'}
+const _d=draw;draw=function(a){_d(a);fx(a);tr();disk()};
+const _c=compare;compare=function(){_c();if(!R.length||$('err').textContent)return;
+const o=[['FIFO','#f2f5ff'],['LRU','#7df0ff'],['OPT','#ffd23f']].map(([a,c])=>({a,c,S:sim(a,R,N).S})),mx=Math.max(...o.map(x=>x.S[x.S.length-1].fl)),h=190;
+$('crv').innerHTML='<line x1="10" x2="590" y1="'+Y(0,mx,h)+'" y2="'+Y(0,mx,h)+'" stroke="currentColor" opacity=".4"/>'+o.map((x,j)=>{const l=x.S[x.S.length-1].fl;return '<polyline class="crv" pathLength="1" stroke="'+x.c+'" style="animation-delay:'+j*.15+'s" points="'+P(x.S,h,mx,x.S.length-1)+'"/><text x="588" y="'+(Y(l,mx,h)-7)+'" text-anchor="end" fill="'+x.c+'" font-size="12" font-family="IBM Plex Mono,monospace">'+NM[x.a]+' '+l+'</text>'}).join('')};
+</script></body></html>
