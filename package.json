@@ -1,0 +1,23 @@
+{
+  "name": "framelab",
+  "version": "1.0.0",
+  "description": "FrameLab — Autonomous Interactive Page Replacement Algorithm Simulator (FIFO, LRU, Optimal)",
+  "type": "module",
+  "main": "js/main.js",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "start": "npx serve -l 3000 ."
+  },
+  "keywords": [
+    "operating-systems",
+    "page-replacement",
+    "fifo",
+    "lru",
+    "optimal",
+    "memory-management",
+    "simulator",
+    "education"
+  ],
+  "author": "Rounak Prasad",
+  "license": "MIT"
+}
