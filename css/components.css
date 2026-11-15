@@ -1,0 +1,291 @@
+/**
+ * FrameLab - Component Styles
+ * Buttons, forms, inputs, badges, cards, stats, and callouts.
+ */
+
+/* Cards & Panels */
+.card {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  transition: border-color var(--transition-fast);
+}
+
+.card:hover {
+  border-color: var(--color-border-hover);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.card-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.625rem 1.125rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  line-height: 1;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+  border-color: var(--color-secondary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-secondary-hover);
+  border-color: var(--color-secondary-hover);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--color-bg-alt);
+  border-color: var(--color-border-hover);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-foreground-muted);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--color-bg-alt);
+  color: var(--color-foreground);
+}
+
+.btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: var(--text-xs);
+}
+
+.btn-icon {
+  flex-shrink: 0;
+}
+
+/* Form Controls */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-foreground-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.form-input,
+.form-select {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  padding: 0.65rem 0.85rem;
+  background-color: var(--color-bg);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  width: 100%;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.form-error {
+  color: var(--color-fault);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  min-height: 1.25rem;
+  margin-top: var(--space-1);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.25rem 0.5rem;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+}
+
+.badge-success {
+  background-color: var(--color-hit-bg);
+  color: var(--color-hit-text);
+  border: 1px solid var(--color-hit-border);
+}
+
+.badge-destructive {
+  background-color: var(--color-fault-bg);
+  color: var(--color-fault-text);
+  border: 1px solid var(--color-fault-border);
+}
+
+.badge-warning {
+  background-color: var(--color-replacement-bg);
+  color: var(--color-replacement-text);
+  border: 1px solid var(--color-replacement-border);
+}
+
+.badge-neutral {
+  background-color: var(--color-neutral-bg);
+  color: var(--color-foreground-muted);
+  border: 1px solid var(--color-neutral-border);
+}
+
+.badge-primary {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+}
+
+/* Preset Buttons Row */
+.presets-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+.presets-label {
+  font-size: var(--text-xs);
+  color: var(--color-foreground-subtle);
+  font-weight: 500;
+}
+
+.preset-chip {
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground-muted);
+  padding: 0.25rem 0.5rem;
+  font-size: var(--text-xs);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.preset-chip:hover {
+  background-color: var(--color-card);
+  color: var(--color-foreground);
+  border-color: var(--color-border-hover);
+}
+
+/* Callouts */
+.callout {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-border);
+  background-color: var(--color-bg-alt);
+  margin-top: var(--space-4);
+}
+
+.callout p {
+  margin-bottom: var(--space-2);
+}
+
+.callout p:last-child {
+  margin-bottom: 0;
+}
+
+.callout-warning {
+  border-left-color: var(--color-replacement);
+  background-color: var(--color-replacement-bg);
+  color: var(--color-replacement-text);
+}
+
+.callout-info {
+  border-left-color: var(--color-secondary);
+  background-color: var(--color-primary-light);
+}
+
+/* Stats Bar */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.stat-box {
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+
+.stat-label {
+  font-size: var(--text-xs);
+  color: var(--color-foreground-subtle);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.stat-value {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-foreground);
+  line-height: 1;
+}
