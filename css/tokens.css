@@ -1,45 +1,48 @@
 /**
- * FrameLab — Memory Atlas Design Tokens
- * Scientific visualization workspace combined with an editorial educational experience.
+ * FrameLab — Scientific Laboratory Design Tokens
+ * Deep obsidian canvas, layered dark glass surfaces, luminescent wireframe borders,
+ * electric teal for hits, warm amber for faults, and scientific violet for replacements.
  */
 
 :root {
-  /* Core Canvas & Surfaces */
-  --canvas: #F3F6F8;
-  --surface: #FFFFFF;
-  --surface-secondary: #EAF0F4;
-  --surface-tertiary: #DEE6ED;
+  /* Canvas & Surfaces */
+  --canvas: #090d16;
+  --surface: #0f172a;
+  --surface-secondary: #162035;
+  --surface-tertiary: #1e2a44;
+  --surface-hover: rgba(255, 255, 255, 0.06);
 
   /* Typography Colors */
-  --ink: #19293A;
-  --text-secondary: #627284;
-  --text-tertiary: #8A99A8;
-  --border: #DCE3E9;
-  --border-strong: #BDC9D5;
-  --border-focus: #3859D6;
+  --ink: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --border-focus: #38bdf8;
 
-  /* Brand Accent */
-  --primary: #3859D6;
-  --primary-hover: #2B47B8;
-  --primary-soft: #E8EDFF;
+  /* Brand / Primary Accent */
+  --primary: #38bdf8;
+  --primary-hover: #0ea5e9;
+  --primary-soft: rgba(56, 189, 248, 0.14);
+  --primary-border: rgba(56, 189, 248, 0.35);
 
-  /* State: Page Hit (Scientific Teal) */
-  --hit: #087F72;
-  --hit-hover: #06665B;
-  --hit-soft: #DDF3EC;
-  --hit-border: #9FD9C9;
+  /* State: Page Hit (Electric Teal) */
+  --hit: #2dd4bf;
+  --hit-hover: #14b8a6;
+  --hit-soft: rgba(45, 212, 191, 0.14);
+  --hit-border: rgba(45, 212, 191, 0.45);
 
-  /* State: Page Fault (Warm Terracotta / Coral) */
-  --fault: #C15A37;
-  --fault-hover: #A54828;
-  --fault-soft: #FCEAE3;
-  --fault-border: #F6C8BA;
+  /* State: Page Fault (Warm Amber-Orange) */
+  --fault: #fb923c;
+  --fault-hover: #f97316;
+  --fault-soft: rgba(251, 146, 60, 0.14);
+  --fault-border: rgba(251, 146, 60, 0.45);
 
-  /* State: Replacement Victim (Scientific Violet) */
-  --replacement: #8762B8;
-  --replacement-hover: #6F4A9F;
-  --replacement-soft: #F0EAF8;
-  --replacement-border: #D3C2E7;
+  /* State: Replacement Victim (Luminescent Violet) */
+  --replacement: #c084fc;
+  --replacement-hover: #a855f7;
+  --replacement-soft: rgba(192, 132, 252, 0.14);
+  --replacement-border: rgba(192, 132, 252, 0.45);
 
   /* Typography System */
   --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
@@ -58,15 +61,15 @@
   --text-4xl: 3.5rem;    /* 56px */
 
   /* Spacing Scale */
-  --space-1: 0.25rem; /* 4px */
-  --space-2: 0.5rem;  /* 8px */
-  --space-3: 0.75rem; /* 12px */
-  --space-4: 1rem;    /* 16px */
-  --space-5: 1.25rem; /* 20px */
-  --space-6: 1.5rem;  /* 24px */
-  --space-8: 2rem;    /* 32px */
-  --space-10: 2.5rem; /* 40px */
-  --space-12: 3rem;   /* 48px */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
 
   /* Radii */
   --radius-xs: 3px;
@@ -75,12 +78,12 @@
   --radius-lg: 14px;
   --radius-full: 9999px;
 
-  /* Subtle Scientific Shadows */
-  --shadow-subtle: 0 1px 3px rgba(25, 41, 58, 0.04), 0 1px 2px rgba(25, 41, 58, 0.02);
-  --shadow-card: 0 2px 6px -1px rgba(25, 41, 58, 0.05), 0 1px 3px -1px rgba(25, 41, 58, 0.03);
-  --shadow-active: 0 8px 20px -4px rgba(56, 89, 214, 0.12), 0 3px 6px -2px rgba(25, 41, 58, 0.04);
-  --shadow-cell-hit: 0 4px 14px -2px rgba(8, 127, 114, 0.25);
-  --shadow-cell-fault: 0 4px 14px -2px rgba(193, 90, 55, 0.25);
+  /* Glows & Shadows */
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+  --shadow-active: 0 0 20px rgba(56, 189, 248, 0.2);
+  --shadow-cell-hit: 0 0 18px rgba(45, 212, 191, 0.25);
+  --shadow-cell-fault: 0 0 18px rgba(251, 146, 60, 0.25);
 
   /* Transitions */
   --transition-fast: 140ms cubic-bezier(0.2, 0, 0, 1);

@@ -1,12 +1,10 @@
 /**
- * FrameLab — Memory Atlas Simulator Controller
+ * FrameLab — Scientific Laboratory Simulator Controller
  * Orchestrates memory-cell architecture updates, reference stream tracking,
- * ingestion gateway transitions, and editorial narratives.
+ * ingestion gateway transitions, and dedicated millisecond timing speed controller.
  */
 
 import { simulate } from './algorithms.js';
-
-const SPEED_DELAYS = [1600, 1200, 850, 550, 350, 200];
 
 export class SimulatorController {
   /**
@@ -20,7 +18,7 @@ export class SimulatorController {
     this.result = null;
     this.currentStepIndex = -1;
     this.timer = null;
-    this.speedLevel = 3;
+    this.delayMs = 800; // Exact millisecond timing per step
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', e => {
@@ -28,6 +26,7 @@ export class SimulatorController {
     });
 
     this.bindEvents();
+    this.updateSpeedDisplay();
   }
 
   bindEvents() {
@@ -52,13 +51,64 @@ export class SimulatorController {
         this.goToStep(-1, false);
       });
     }
+
+    // Direct millisecond timing slider
     if (this.el.speedSlider) {
       this.el.speedSlider.addEventListener('input', e => {
-        this.speedLevel = Number(e.target.value);
-        if (this.isPlaying()) {
+        this.setSpeedMs(Number(e.target.value));
+      });
+    }
+
+    // Quick speed multiplier presets
+    if (this.el.speedPresetBtns) {
+      this.el.speedPresetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const ms = Number(btn.dataset.ms);
+          if (ms) {
+            this.setSpeedMs(ms);
+          }
+        });
+      });
+    }
+  }
+
+  /**
+   * Sets exact playback delay in milliseconds.
+   * @param {number} ms
+   */
+  setSpeedMs(ms) {
+    this.delayMs = Math.max(50, Math.min(2500, ms));
+    if (this.el.speedSlider) {
+      this.el.speedSlider.value = String(this.delayMs);
+    }
+    this.updateSpeedDisplay();
+
+    // If currently playing, seamlessly update the interval
+    if (this.isPlaying()) {
+      clearInterval(this.timer);
+      this.timer = setInterval(() => {
+        if (this.currentStepIndex >= this.sequence.length - 1) {
           this.pause();
-          this.play();
+          return;
         }
+        this.next();
+      }, this.delayMs);
+    }
+  }
+
+  /**
+   * Updates the live speed readout badge and active preset highlighting.
+   */
+  updateSpeedDisplay() {
+    if (this.el.speedTimingBadge) {
+      const multiplier = (800 / this.delayMs).toFixed(1);
+      this.el.speedTimingBadge.textContent = `${this.delayMs} ms / step (${multiplier}x)`;
+    }
+
+    if (this.el.speedPresetBtns) {
+      this.el.speedPresetBtns.forEach(btn => {
+        const btnMs = Number(btn.dataset.ms);
+        btn.classList.toggle('active', Math.abs(btnMs - this.delayMs) <= 50);
       });
     }
   }
@@ -97,14 +147,13 @@ export class SimulatorController {
 
     this.updatePlayButtonState(true);
 
-    const delay = SPEED_DELAYS[this.speedLevel - 1] || 850;
     this.timer = setInterval(() => {
       if (this.currentStepIndex >= this.sequence.length - 1) {
         this.pause();
         return;
       }
       this.next();
-    }, delay);
+    }, this.delayMs);
   }
 
   pause() {
@@ -163,7 +212,7 @@ export class SimulatorController {
       header.className = 'cell-header';
 
       const idTag = document.createElement('span');
-      idTag.className = 'frame-id-tag';
+      idTag.className = 'frame-id-tag font-mono';
       idTag.textContent = `FRAME ${String(k + 1).padStart(2, '0')}`;
 
       const statusBadge = document.createElement('span');
@@ -183,7 +232,7 @@ export class SimulatorController {
       valueContainer.appendChild(pageVal);
 
       const footer = document.createElement('div');
-      footer.className = 'cell-footer';
+      footer.className = 'cell-footer font-mono';
       footer.textContent = 'Unallocated';
 
       cell.appendChild(header);
@@ -262,7 +311,7 @@ export class SimulatorController {
           badgeEl.className = 'cell-status-badge badge-neutral';
           badgeEl.textContent = 'Resident';
         }
-        if (footerEl) footerEl.textContent = 'In Memory';
+        if (footerEl) footerEl.textContent = 'Resident';
       }
 
       // Check if this frame is active in current step
@@ -283,7 +332,7 @@ export class SimulatorController {
             cell.classList.add('victim-cell');
             if (badgeEl) {
               badgeEl.className = 'cell-status-badge badge-replacement';
-              badgeEl.textContent = 'Replaced';
+              badgeEl.textContent = 'Victim';
             }
             if (footerEl) footerEl.textContent = `Evicted P${step.evictedPage}`;
           } else {
@@ -360,7 +409,8 @@ export class SimulatorController {
       this.el.progressBar.style.width = `${pct}%`;
     }
     if (this.el.stepCounter) {
-      this.el.stepCounter.textContent = `Step ${currentStepNum} of ${totalSteps}`;
+      const pct = totalSteps > 0 ? ((currentStepNum / totalSteps) * 100).toFixed(0) : 0;
+      this.el.stepCounter.textContent = `Step ${currentStepNum} of ${totalSteps} (${pct}%)`;
     }
 
     // 6. Update live metrics
@@ -376,7 +426,7 @@ export class SimulatorController {
     if (this.el.statHitRate) this.el.statHitRate.textContent = `${currentHitRatio.toFixed(1)}%`;
     if (this.el.statFaultRate) this.el.statFaultRate.textContent = `${currentFaultRatio.toFixed(1)}%`;
 
-    // 7. Update eviction archive (disk pool)
+    // 7. Update eviction archive
     if (this.el.diskContainer) {
       this.updateEvictionArchive();
     }
@@ -392,7 +442,7 @@ export class SimulatorController {
   }
 
   /**
-   * Updates eviction archive with pages pushed out of physical memory.
+   * Updates eviction archive with displaced pages.
    */
   updateEvictionArchive() {
     this.el.diskContainer.innerHTML = '';
@@ -416,7 +466,6 @@ export class SimulatorController {
       return;
     }
 
-    // Show most recently evicted first
     evictedSteps.slice().reverse().forEach((s, idx) => {
       const chip = document.createElement('div');
       chip.className = 'archive-chip' + (idx === 0 ? ' latest-eviction' : '');
@@ -436,7 +485,7 @@ export class SimulatorController {
   }
 
   /**
-   * Renders scientific fault accumulation sparkline in SVG.
+   * Renders scientific fault progression curve in SVG.
    */
   renderFaultSparklineSvg() {
     const svg = this.el.faultCurveSvg;

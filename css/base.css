@@ -1,6 +1,6 @@
 /**
- * FrameLab — Memory Atlas Base Styles
- * Editorial typography, global resets, accessible focus rings, and scrollbars.
+ * FrameLab — Scientific Laboratory Base Styles
+ * Dark blueprint canvas, high-contrast typography, and focus ring.
  */
 
 *,
@@ -22,7 +22,12 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--canvas);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 55%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--canvas);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans);
   font-weight: 400;
@@ -86,21 +91,22 @@ strong, b {
   display: none !important;
 }
 
-/* Subtle scientific scrollbars */
+/* Scientific dark scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--surface-secondary);
+  background: rgba(0, 0, 0, 0.35);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: var(--surface-tertiary);
   border-radius: var(--radius-xs);
+  border: 1px solid var(--border);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--primary);
 }
