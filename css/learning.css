@@ -1,5 +1,5 @@
 /**
- * FrameLab — Memory Atlas Learning Styles
+ * FrameLab — Scientific Laboratory Learning Styles
  * Editorial reading experience, theoretical breakdowns, complexity matrix,
  * and interactive Belady's Anomaly lab.
  */
@@ -26,7 +26,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  box-shadow: var(--shadow-subtle);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   transition: border-color var(--transition-fast);
@@ -42,7 +42,7 @@
   justify-content: space-between;
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--surface-secondary);
+  border-bottom: 1px solid var(--border);
 }
 
 .article-title {
@@ -68,7 +68,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--ink);
+  color: var(--primary);
   margin-top: var(--space-4);
   margin-bottom: 4px;
 }
@@ -79,7 +79,7 @@
   font-size: 0.8rem;
   font-weight: 600;
   padding: 2px 7px;
-  background-color: var(--surface-secondary);
+  background-color: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--border);
   border-radius: var(--radius-xs);
   color: var(--primary);
@@ -92,7 +92,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  box-shadow: var(--shadow-subtle);
+  box-shadow: var(--shadow-card);
 }
 
 .tradeoff-title {
@@ -107,6 +107,7 @@
   margin-top: var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .tradeoff-table {
@@ -141,7 +142,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  box-shadow: var(--shadow-subtle);
+  box-shadow: var(--shadow-card);
 }
 
 .belady-lab-header {
@@ -161,7 +162,7 @@
 }
 
 .belady-result-card {
-  background-color: var(--canvas);
+  background-color: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: var(--space-4);

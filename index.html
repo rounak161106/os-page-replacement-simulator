@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="FrameLab — Memory Atlas: An Interactive Memory Laboratory for Operating Systems Page Replacement Algorithms (FIFO, LRU, Optimal).">
-  <title>FrameLab — Memory Atlas</title>
+  <meta name="description" content="FrameLab — Scientific Memory Laboratory for Operating Systems Page Replacement Algorithms (FIFO, LRU, Optimal).">
+  <title>FrameLab — Scientific Memory Laboratory</title>
 
-  <!-- Google Fonts: Manrope (Headings & Interface) + IBM Plex Mono (Technical Readouts) -->
+  <!-- Typography: Manrope (Headings & Interface) + IBM Plex Mono (Technical Readouts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap">
@@ -31,7 +31,7 @@
           <div class="brand-glyph" aria-hidden="true">F</div>
           <div class="brand-title-group">
             <h1 class="brand-title">FrameLab</h1>
-            <span class="brand-subtitle">// Memory Atlas</span>
+            <span class="brand-subtitle">// MEMORY ATLAS</span>
           </div>
         </div>
 
@@ -118,7 +118,7 @@
 
         <!-- Simulator Signature Workspace -->
         <div id="simulator-stage-box" class="simulator-workspace">
-          <!-- Playback Toolbar -->
+          <!-- Playback Toolbar with Dedicated Speed & Timing Controller -->
           <div class="playback-bar">
             <div class="playback-controls-group">
               <button type="button" id="btn-prev" class="btn btn-outline btn-sm" aria-label="Step Backward">
@@ -138,16 +138,28 @@
               </button>
             </div>
 
-            <div class="speed-control-box">
-              <label for="speed-slider">Speed</label>
-              <input id="speed-slider" class="speed-slider" type="range" min="1" max="6" value="3" aria-label="Simulation speed">
-              <span id="step-counter" class="step-readout" aria-live="polite">Step 0 of 0</span>
+            <!-- Dedicated Timing Speed Controller -->
+            <div class="speed-timing-container">
+              <div class="speed-meta-group">
+                <span class="speed-label">Playback Interval</span>
+                <span id="speed-timing-badge" class="speed-timing-badge">800 ms / step (1.25x)</span>
+              </div>
+              <input id="speed-slider" class="speed-slider" type="range" min="100" max="2000" step="50" value="800" aria-label="Playback step interval in milliseconds">
+              <div class="speed-presets-group" aria-label="Speed multiplier presets">
+                <button type="button" class="speed-preset-btn" data-ms="1600" title="0.5x speed">0.5x</button>
+                <button type="button" class="speed-preset-btn active" data-ms="800" title="1.0x normal speed">1.0x</button>
+                <button type="button" class="speed-preset-btn" data-ms="400" title="2.0x fast speed">2.0x</button>
+                <button type="button" class="speed-preset-btn" data-ms="200" title="4.0x rapid speed">4.0x</button>
+              </div>
             </div>
           </div>
 
-          <!-- Simulation Progress Rail -->
-          <div class="progress-rail" aria-label="Simulation Progress">
-            <div id="sim-progress" class="progress-fill"></div>
+          <!-- Progress Rail with Dedicated Step Counter -->
+          <div class="progress-section">
+            <div class="progress-rail" aria-label="Simulation Progress">
+              <div id="sim-progress" class="progress-fill"></div>
+            </div>
+            <span id="step-counter" class="step-progress-badge" aria-live="polite">Step 0 of 0</span>
           </div>
 
           <!-- Reference Stream Timeline -->
@@ -395,7 +407,7 @@
     <footer class="app-footer">
       <div class="footer-container">
         <div>
-          <strong>FrameLab</strong> — Memory Atlas
+          <strong>FrameLab</strong> — Scientific Memory Laboratory
         </div>
         <div class="footer-meta">
           Pure ES Modules &bull; Zero Runtime Dependencies
