@@ -1,95 +1,156 @@
 /**
- * FrameLab - Learning Styles
- * Educational cards, complexity comparison matrix, and Belady's Anomaly interactive playground.
+ * FrameLab — Memory Atlas Learning Styles
+ * Editorial reading experience, theoretical breakdowns, complexity matrix,
+ * and interactive Belady's Anomaly lab.
  */
 
-.learning-grid {
+.learning-editorial-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.learning-intro-block {
+  margin-bottom: var(--space-4);
+}
+
+/* Algorithm Breakdown Cards */
+.algorithm-deep-dive-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: var(--space-6);
-  margin-bottom: var(--space-6);
 }
 
-.learning-card {
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
+.algorithm-article {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-subtle);
   display: flex;
   flex-direction: column;
+  transition: border-color var(--transition-fast);
 }
 
-.learning-card-header {
+.algorithm-article:hover {
+  border-color: var(--border-strong);
+}
+
+.article-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--surface-secondary);
 }
 
-.learning-card-header h3 {
+.article-title {
   font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--ink);
   margin: 0;
 }
 
-.learning-body {
+.article-body {
   font-size: var(--text-sm);
-  line-height: 1.6;
+  line-height: 1.65;
+  color: var(--text-secondary);
 }
 
-.learning-section-title {
+.article-body p {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.section-label {
   font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--color-foreground-subtle);
-  margin-top: var(--space-3);
-  margin-bottom: var(--space-1);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  margin-top: var(--space-4);
+  margin-bottom: 4px;
 }
 
-.complexity-tag {
+.complexity-chip {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  padding: 2px 6px;
-  background: var(--color-bg-alt);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
-  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  background-color: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--primary);
   margin-right: var(--space-2);
 }
 
-/* Complexity Matrix Table */
-.complexity-matrix-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: var(--space-4);
-  font-size: var(--text-sm);
+/* Trade-Off Matrix Panel */
+.tradeoff-panel {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-subtle);
 }
 
-.complexity-matrix-table th,
-.complexity-matrix-table td {
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border-subtle);
+.tradeoff-title {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: var(--space-1);
+}
+
+.tradeoff-table-wrapper {
+  overflow-x: auto;
+  margin-top: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.tradeoff-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
   text-align: left;
 }
 
-.complexity-matrix-table th {
-  background-color: var(--color-bg-alt);
-  color: var(--color-foreground-muted);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  font-weight: 600;
+.tradeoff-table th,
+.tradeoff-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
 }
 
-/* Belady's Anomaly Card */
-.belady-interactive-card {
-  background-color: var(--color-card);
-  border: 1px solid var(--color-border);
+.tradeoff-table th {
+  background-color: var(--surface-secondary);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tradeoff-table td {
+  color: var(--ink);
+}
+
+/* Belady's Anomaly Laboratory */
+.belady-lab-panel {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  margin-top: var(--space-6);
+  box-shadow: var(--shadow-subtle);
+}
+
+.belady-lab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
 }
 
 .belady-comparison-grid {
@@ -99,42 +160,32 @@
   margin-top: var(--space-4);
 }
 
-.belady-card {
-  background: var(--color-bg-alt);
-  border: 1px solid var(--color-border);
+.belady-result-card {
+  background-color: var(--canvas);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: var(--space-4);
 }
 
-.belady-card.anomaly-paradox {
-  border-color: var(--color-replacement);
+.belady-result-card.paradox-card {
+  border-color: var(--fault-border);
+  background-color: var(--fault-soft);
 }
 
-.belady-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-3);
-}
-
-.belady-card-header h4 {
-  font-size: var(--text-base);
-  margin: 0;
-}
-
-.belady-stat {
+.belady-stat-readout {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
+  margin: var(--space-2) 0;
 }
 
-.stat-big {
-  font-size: var(--text-3xl);
-  font-weight: 800;
+.belady-num {
+  font-family: var(--font-mono);
+  font-size: 2.25rem;
+  font-weight: 700;
   line-height: 1;
 }
 
-.text-destructive {
-  color: var(--color-fault);
+.belady-num.fault-count {
+  color: var(--fault);
 }

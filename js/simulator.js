@@ -1,13 +1,12 @@
 /**
- * FrameLab - Simulator Controller Module
- * Manages simulation playback, step navigation, memory frame rendering,
- * timeline synchronization, and educational narratives.
+ * FrameLab — Memory Atlas Simulator Controller
+ * Orchestrates memory-cell architecture updates, reference stream tracking,
+ * ingestion gateway transitions, and editorial narratives.
  */
 
-import { simulate, DECISIONS } from './algorithms.js';
+import { simulate } from './algorithms.js';
 
-// Playback speeds in milliseconds (speed levels 1 through 6)
-const SPEED_DELAYS = [1800, 1300, 850, 500, 300, 150];
+const SPEED_DELAYS = [1600, 1200, 850, 550, 350, 200];
 
 export class SimulatorController {
   /**
@@ -24,7 +23,6 @@ export class SimulatorController {
     this.speedLevel = 3;
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Listen for reduced motion preference changes
     window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', e => {
       this.reducedMotion = e.matches;
     });
@@ -32,9 +30,6 @@ export class SimulatorController {
     this.bindEvents();
   }
 
-  /**
-   * Attach event listeners to simulator controls.
-   */
   bindEvents() {
     if (this.el.btnPlay) {
       this.el.btnPlay.addEventListener('click', () => this.togglePlay());
@@ -69,7 +64,7 @@ export class SimulatorController {
   }
 
   /**
-   * Initializes or updates the simulator with a new simulation dataset.
+   * Initializes simulator with a new sequence and frame allotment.
    *
    * @param {number[]} sequence
    * @param {number} frameCount
@@ -88,22 +83,14 @@ export class SimulatorController {
     this.updateView(false);
   }
 
-  /**
-   * Checks if playback is actively running.
-   * @returns {boolean}
-   */
   isPlaying() {
     return this.timer !== null;
   }
 
-  /**
-   * Starts automatic step playback.
-   */
   play() {
     if (this.isPlaying()) return;
     if (!this.result || this.sequence.length === 0) return;
 
-    // If at the end, restart from beginning
     if (this.currentStepIndex >= this.sequence.length - 1) {
       this.goToStep(-1, false);
     }
@@ -120,9 +107,6 @@ export class SimulatorController {
     }, delay);
   }
 
-  /**
-   * Pauses automatic playback.
-   */
   pause() {
     if (this.timer !== null) {
       clearInterval(this.timer);
@@ -131,9 +115,6 @@ export class SimulatorController {
     this.updatePlayButtonState(false);
   }
 
-  /**
-   * Toggles playback between play and pause.
-   */
   togglePlay() {
     if (this.isPlaying()) {
       this.pause();
@@ -142,9 +123,6 @@ export class SimulatorController {
     }
   }
 
-  /**
-   * Advances to the next step.
-   */
   next() {
     if (!this.result) return;
     if (this.currentStepIndex < this.sequence.length - 1) {
@@ -154,9 +132,6 @@ export class SimulatorController {
     }
   }
 
-  /**
-   * Steps back to the previous step.
-   */
   prev() {
     if (!this.result) return;
     if (this.currentStepIndex > -1) {
@@ -164,12 +139,6 @@ export class SimulatorController {
     }
   }
 
-  /**
-   * Jumps to a specific step index (-1 to sequence.length - 1).
-   *
-   * @param {number} stepIdx
-   * @param {boolean} animate
-   */
   goToStep(stepIdx, animate = true) {
     if (!this.result) return;
     const clamped = Math.max(-1, Math.min(this.sequence.length - 1, stepIdx));
@@ -178,39 +147,55 @@ export class SimulatorController {
   }
 
   /**
-   * Pre-renders the memory frame slots container.
+   * Renders initial architectural memory frame cells.
    */
   renderInitialStage() {
     if (!this.el.framesContainer) return;
     this.el.framesContainer.innerHTML = '';
 
     for (let k = 0; k < this.frameCount; k++) {
-      const slot = document.createElement('div');
-      slot.className = 'frame-slot empty';
-      slot.setAttribute('role', 'listitem');
-      slot.dataset.frame = String(k);
+      const cell = document.createElement('div');
+      cell.className = 'memory-frame-cell empty-cell';
+      cell.setAttribute('role', 'listitem');
+      cell.dataset.frame = String(k);
 
-      const label = document.createElement('span');
-      label.className = 'slot-label';
-      label.textContent = `Frame ${k + 1}`;
+      const header = document.createElement('div');
+      header.className = 'cell-header';
 
-      const value = document.createElement('span');
-      value.className = 'slot-value';
-      value.textContent = '–';
+      const idTag = document.createElement('span');
+      idTag.className = 'frame-id-tag';
+      idTag.textContent = `FRAME ${String(k + 1).padStart(2, '0')}`;
 
-      const evictedTag = document.createElement('span');
-      evictedTag.className = 'slot-evicted';
-      evictedTag.textContent = '';
+      const statusBadge = document.createElement('span');
+      statusBadge.className = 'cell-status-badge badge-neutral';
+      statusBadge.textContent = 'Empty';
 
-      slot.appendChild(label);
-      slot.appendChild(value);
-      slot.appendChild(evictedTag);
-      this.el.framesContainer.appendChild(slot);
+      header.appendChild(idTag);
+      header.appendChild(statusBadge);
+
+      const valueContainer = document.createElement('div');
+      valueContainer.className = 'cell-value-container';
+
+      const pageVal = document.createElement('span');
+      pageVal.className = 'frame-page-val font-mono';
+      pageVal.textContent = '–';
+
+      valueContainer.appendChild(pageVal);
+
+      const footer = document.createElement('div');
+      footer.className = 'cell-footer';
+      footer.textContent = 'Unallocated';
+
+      cell.appendChild(header);
+      cell.appendChild(valueContainer);
+      cell.appendChild(footer);
+
+      this.el.framesContainer.appendChild(cell);
     }
   }
 
   /**
-   * Renders the interactive timeline pills.
+   * Renders the reference stream horizontal token timeline.
    */
   renderTimeline() {
     if (!this.el.timelineContainer) return;
@@ -219,139 +204,166 @@ export class SimulatorController {
     const steps = this.result ? this.result.steps : [];
 
     steps.forEach((step, idx) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'timeline-pill future';
-      btn.dataset.index = String(idx);
-      btn.setAttribute('aria-label', `Step ${step.stepNumber}, Page ${step.requestedPage}`);
+      const token = document.createElement('button');
+      token.type = 'button';
+      token.className = 'stream-token upcoming';
+      token.dataset.index = String(idx);
+      token.setAttribute('aria-label', `Step ${step.stepNumber}: page ${step.requestedPage}`);
 
-      const num = document.createElement('span');
-      num.className = 'pill-num';
-      num.textContent = String(step.requestedPage);
+      const pageNum = document.createElement('span');
+      pageNum.className = 'token-page-num font-mono';
+      pageNum.textContent = String(step.requestedPage);
 
-      const status = document.createElement('span');
-      status.className = 'pill-status';
-      status.textContent = step.isHit ? 'H' : 'F';
+      const dot = document.createElement('span');
+      dot.className = 'token-status-dot';
 
-      btn.appendChild(num);
-      btn.appendChild(status);
+      token.appendChild(pageNum);
+      token.appendChild(dot);
 
-      btn.addEventListener('click', () => {
+      token.addEventListener('click', () => {
         this.pause();
         this.goToStep(idx, true);
       });
 
-      this.el.timelineContainer.appendChild(btn);
+      this.el.timelineContainer.appendChild(token);
     });
   }
 
   /**
-   * Synchronizes all simulator views (frames, timeline, progress, stats, disk, SVG).
-   *
-   * @param {boolean} animate
+   * Synchronizes all visual components with the active simulation state.
    */
   updateView(animate) {
     if (!this.result) return;
 
     const step = this.currentStepIndex >= 0 ? this.result.steps[this.currentStepIndex] : null;
-    const slots = this.el.framesContainer ? Array.from(this.el.framesContainer.children) : [];
+    const cells = this.el.framesContainer ? Array.from(this.el.framesContainer.children) : [];
 
-    // 1. Update memory slots
+    // 1. Update physical memory cells
     for (let k = 0; k < this.frameCount; k++) {
-      const slotEl = slots[k];
-      if (!slotEl) continue;
+      const cell = cells[k];
+      if (!cell) continue;
 
       const pageVal = step ? step.framesAfter[k] : null;
-      const slotValEl = slotEl.querySelector('.slot-value');
-      const slotEvictedEl = slotEl.querySelector('.slot-evicted');
+      const pageValEl = cell.querySelector('.frame-page-val');
+      const badgeEl = cell.querySelector('.cell-status-badge');
+      const footerEl = cell.querySelector('.cell-footer');
 
-      slotEl.className = 'frame-slot' + (pageVal === null ? ' empty' : ' occupied');
-      if (slotValEl) slotValEl.textContent = pageVal === null ? '–' : String(pageVal);
+      cell.className = 'memory-frame-cell' + (pageVal === null ? ' empty-cell' : '');
+      if (pageValEl) pageValEl.textContent = pageVal === null ? '–' : String(pageVal);
 
-      // Check if this frame is affected in the current step
+      if (pageVal === null) {
+        if (badgeEl) {
+          badgeEl.className = 'cell-status-badge badge-neutral';
+          badgeEl.textContent = 'Empty';
+        }
+        if (footerEl) footerEl.textContent = 'Unallocated';
+      } else {
+        if (badgeEl) {
+          badgeEl.className = 'cell-status-badge badge-neutral';
+          badgeEl.textContent = 'Resident';
+        }
+        if (footerEl) footerEl.textContent = 'In Memory';
+      }
+
+      // Check if this frame is active in current step
       if (step && step.affectedFrameIndex === k) {
         if (step.isHit) {
-          slotEl.classList.add('hit-active');
-          if (slotEvictedEl) slotEvictedEl.textContent = 'Hit';
+          cell.classList.add('hit-active');
+          if (badgeEl) {
+            badgeEl.className = 'cell-status-badge badge-hit';
+            badgeEl.textContent = 'Hit';
+          }
+          if (footerEl) footerEl.textContent = 'Page Hit in Frame';
           if (animate && !this.reducedMotion) {
-            this.triggerPulseAnimation(slotEl);
+            this.triggerPulseAnimation(cell);
           }
         } else {
-          slotEl.classList.add('fault-active');
+          cell.classList.add('fault-active');
           if (step.isReplacement && step.evictedPage !== null) {
-            slotEl.classList.add('replacement-target');
-            if (slotEvictedEl) slotEvictedEl.textContent = `Evicted ${step.evictedPage}`;
+            cell.classList.add('victim-cell');
+            if (badgeEl) {
+              badgeEl.className = 'cell-status-badge badge-replacement';
+              badgeEl.textContent = 'Replaced';
+            }
+            if (footerEl) footerEl.textContent = `Evicted P${step.evictedPage}`;
           } else {
-            if (slotEvictedEl) slotEvictedEl.textContent = 'Loaded';
+            if (badgeEl) {
+              badgeEl.className = 'cell-status-badge badge-fault';
+              badgeEl.textContent = 'Loaded';
+            }
+            if (footerEl) footerEl.textContent = 'Loaded into Empty Frame';
           }
           if (animate && !this.reducedMotion) {
-            this.triggerDropAnimation(slotEl);
+            this.triggerDropAnimation(cell);
           }
         }
-      } else {
-        if (slotEvictedEl) slotEvictedEl.textContent = '';
       }
     }
 
-    // 2. Update current page indicator
+    // 2. Update ingestion gateway (incoming requested page)
     if (this.el.currentPageVal) {
       this.el.currentPageVal.textContent = step ? String(step.requestedPage) : '–';
     }
     if (this.el.currentPageBox) {
-      this.el.currentPageBox.className = 'current-page-box';
+      this.el.currentPageBox.className = 'incoming-page-cell';
       if (step) {
-        this.el.currentPageBox.classList.add(step.isHit ? 'state-hit' : 'state-fault');
+        this.el.currentPageBox.classList.add(step.isHit ? 'hit-state' : 'fault-state');
       }
     }
 
-    // 3. Update narrative / educational explanation
+    // 3. Update editorial narrative
     if (this.el.explanationText) {
       if (step) {
-        this.el.explanationText.textContent = step.explanation;
+        this.el.explanationText.innerHTML = step.isHit
+          ? `<strong>Page Hit.</strong> Page ${step.requestedPage} is already resident in Frame ${step.affectedFrameNumber}. No memory eviction required.`
+          : step.isReplacement
+            ? `<strong>Page Fault &amp; Eviction.</strong> Memory is full. Frame ${step.affectedFrameNumber} selected to evict Page ${step.evictedPage} under ${this.algorithm} policy.`
+            : `<strong>Page Fault &amp; Allocation.</strong> Page ${step.requestedPage} loaded into empty Frame ${step.affectedFrameNumber}.`;
+
         if (this.el.explanationBox) {
-          this.el.explanationBox.className = 'explanation-box ' + (step.isHit ? 'hit' : 'fault');
+          this.el.explanationBox.className = 'editorial-narrative-card ' + (step.isHit ? 'hit-narrative' : 'fault-narrative');
         }
       } else {
-        this.el.explanationText.textContent = 'Press Next or Play to step through memory decisions.';
+        this.el.explanationText.textContent = 'Press Next or Play to observe page ingestion and eviction decisions.';
         if (this.el.explanationBox) {
-          this.el.explanationBox.className = 'explanation-box neutral';
+          this.el.explanationBox.className = 'editorial-narrative-card';
         }
       }
     }
 
-    // 4. Update timeline pills
+    // 4. Update reference stream timeline
     if (this.el.timelineContainer) {
-      const pills = Array.from(this.el.timelineContainer.children);
-      pills.forEach((pill, idx) => {
+      const tokens = Array.from(this.el.timelineContainer.children);
+      tokens.forEach((token, idx) => {
         const stepData = this.result.steps[idx];
-        pill.className = 'timeline-pill';
+        token.className = 'stream-token';
 
         if (idx > this.currentStepIndex) {
-          pill.classList.add('future');
+          token.classList.add('upcoming');
         } else {
-          pill.classList.add(stepData.isHit ? 'hit' : 'fault');
+          token.classList.add(stepData.isHit ? 'hit-token' : 'fault-token');
         }
 
         if (idx === this.currentStepIndex) {
-          pill.classList.add('active');
-          pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          token.classList.add('active-token');
+          token.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
       });
     }
 
-    // 5. Update progress bar and counter
+    // 5. Update progress rail and counter
     const currentStepNum = this.currentStepIndex + 1;
     const totalSteps = this.sequence.length;
 
     if (this.el.progressBar) {
-      this.el.progressBar.max = totalSteps;
-      this.el.progressBar.value = currentStepNum;
+      const pct = totalSteps > 0 ? (currentStepNum / totalSteps) * 100 : 0;
+      this.el.progressBar.style.width = `${pct}%`;
     }
     if (this.el.stepCounter) {
       this.el.stepCounter.textContent = `Step ${currentStepNum} of ${totalSteps}`;
     }
 
-    // 6. Update stats badges
+    // 6. Update live metrics
     const currentFaults = step ? step.cumulativeFaults : 0;
     const currentHits = step ? step.cumulativeHits : 0;
     const currentReplacements = step ? step.cumulativeReplacements : 0;
@@ -364,14 +376,14 @@ export class SimulatorController {
     if (this.el.statHitRate) this.el.statHitRate.textContent = `${currentHitRatio.toFixed(1)}%`;
     if (this.el.statFaultRate) this.el.statFaultRate.textContent = `${currentFaultRatio.toFixed(1)}%`;
 
-    // 7. Update disk / evicted pages pool
+    // 7. Update eviction archive (disk pool)
     if (this.el.diskContainer) {
-      this.updateDiskPool();
+      this.updateEvictionArchive();
     }
 
-    // 8. Update cumulative fault sparkline SVG
+    // 8. Update cumulative fault sparkline
     if (this.el.faultCurveSvg) {
-      this.renderFaultProgressionSvg();
+      this.renderFaultSparklineSvg();
     }
 
     // 9. Update navigation button disabled states
@@ -380,15 +392,15 @@ export class SimulatorController {
   }
 
   /**
-   * Updates the evicted pages list displayed in the disk panel.
+   * Updates eviction archive with pages pushed out of physical memory.
    */
-  updateDiskPool() {
+  updateEvictionArchive() {
     this.el.diskContainer.innerHTML = '';
 
     if (this.currentStepIndex < 0) {
       const emptyNote = document.createElement('span');
-      emptyNote.className = 'disk-empty-note';
-      emptyNote.textContent = 'Frames still have free room. No evictions yet.';
+      emptyNote.className = 'archive-empty-note';
+      emptyNote.textContent = 'No pages evicted yet.';
       this.el.diskContainer.appendChild(emptyNote);
       return;
     }
@@ -398,7 +410,7 @@ export class SimulatorController {
 
     if (evictedSteps.length === 0) {
       const emptyNote = document.createElement('span');
-      emptyNote.className = 'disk-empty-note';
+      emptyNote.className = 'archive-empty-note';
       emptyNote.textContent = 'No pages evicted yet.';
       this.el.diskContainer.appendChild(emptyNote);
       return;
@@ -407,136 +419,99 @@ export class SimulatorController {
     // Show most recently evicted first
     evictedSteps.slice().reverse().forEach((s, idx) => {
       const chip = document.createElement('div');
-      chip.className = 'disk-chip' + (idx === 0 ? ' latest' : '');
+      chip.className = 'archive-chip' + (idx === 0 ? ' latest-eviction' : '');
 
       const pageNum = document.createElement('span');
-      pageNum.className = 'chip-page';
+      pageNum.className = 'archive-page-num font-mono';
       pageNum.textContent = `P${s.evictedPage}`;
 
-      const stepNum = document.createElement('span');
-      stepNum.className = 'chip-step';
-      stepNum.textContent = `from F${s.affectedFrameIndex + 1} (step ${s.stepNumber})`;
+      const meta = document.createElement('span');
+      meta.className = 'archive-meta';
+      meta.textContent = `F${s.affectedFrameNumber}`;
 
       chip.appendChild(pageNum);
-      chip.appendChild(stepNum);
+      chip.appendChild(meta);
       this.el.diskContainer.appendChild(chip);
     });
   }
 
   /**
-   * Renders the cumulative fault curve in the SVG container.
+   * Renders scientific fault accumulation sparkline in SVG.
    */
-  renderFaultProgressionSvg() {
+  renderFaultSparklineSvg() {
     const svg = this.el.faultCurveSvg;
     if (!svg || !this.result) return;
 
     const width = 600;
-    const height = 120;
-    const padding = { top: 16, right: 20, bottom: 20, left: 30 };
+    const height = 110;
+    const padding = { top: 16, right: 30, bottom: 20, left: 36 };
     const chartW = width - padding.left - padding.right;
     const chartH = height - padding.top - padding.bottom;
 
     const totalSteps = this.sequence.length;
     const maxFaults = Math.max(1, this.result.totalFaults);
 
-    const getX = stepIdx => padding.left + ((stepIdx + 1) / totalSteps) * chartW;
-    const getY = faultCount => padding.top + chartH - (faultCount / maxFaults) * chartH;
+    const getX = k => padding.left + ((k + 1) / totalSteps) * chartW;
+    const getY = v => padding.top + chartH - (v / maxFaults) * chartH;
 
-    // Build points for total reference curve
     const allSteps = this.result.steps;
-    const totalPoints = [`${padding.left},${getY(0)}`];
-    allSteps.forEach((s, idx) => {
-      totalPoints.push(`${getX(idx).toFixed(1)},${getY(s.cumulativeFaults).toFixed(1)}`);
+
+    // Full trajectory dashed trace
+    const totalPoints = [`${padding.left},${getY(0).toFixed(1)}`];
+    allSteps.forEach((s, k) => {
+      totalPoints.push(`${getX(k).toFixed(1)},${getY(s.cumulativeFaults).toFixed(1)}`);
     });
 
-    // Build points for progress curve up to current step
-    const currentPoints = [`${padding.left},${getY(0)}`];
+    // Active progress trace
+    const currentPoints = [`${padding.left},${getY(0).toFixed(1)}`];
     if (this.currentStepIndex >= 0) {
-      for (let i = 0; i <= this.currentStepIndex; i++) {
-        const s = allSteps[i];
-        currentPoints.push(`${getX(i).toFixed(1)},${getY(s.cumulativeFaults).toFixed(1)}`);
+      for (let k = 0; k <= this.currentStepIndex; k++) {
+        currentPoints.push(`${getX(k).toFixed(1)},${getY(allSteps[k].cumulativeFaults).toFixed(1)}`);
       }
     }
 
+    const currentStep = this.currentStepIndex >= 0 ? allSteps[this.currentStepIndex] : null;
     const currentX = this.currentStepIndex >= 0 ? getX(this.currentStepIndex) : padding.left;
-    const currentY = this.currentStepIndex >= 0 ? getY(allSteps[this.currentStepIndex].cumulativeFaults) : getY(0);
+    const currentY = this.currentStepIndex >= 0 ? getY(currentStep.cumulativeFaults) : getY(0);
 
     svg.innerHTML = `
-      <defs>
-        <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="var(--color-primary)" stop-opacity="0.25"/>
-          <stop offset="100%" stop-color="var(--color-primary)" stop-opacity="0.0"/>
-        </linearGradient>
-      </defs>
-      <!-- Base baseline -->
-      <line x1="${padding.left}" y1="${getY(0)}" x2="${width - padding.right}" y2="${getY(0)}" stroke="var(--color-border)" stroke-width="1" />
-      <line x1="${padding.left}" y1="${padding.top}" x2="${width - padding.right}" y2="${padding.top}" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+      <!-- Base grid lines -->
+      <line x1="${padding.left}" y1="${getY(0)}" x2="${padding.left + chartW}" y2="${getY(0)}" stroke="var(--border)" stroke-width="1"/>
+      <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left + chartW}" y2="${padding.top}" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
       
-      <!-- Ghost curve showing full trajectory -->
-      <polyline points="${totalPoints.join(' ')}" fill="none" stroke="var(--color-muted-foreground)" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.4" />
+      <!-- Ghost full path -->
+      <polyline points="${totalPoints.join(' ')}" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.7"/>
       
-      <!-- Active progress curve -->
-      <polyline points="${currentPoints.join(' ')}" fill="none" stroke="var(--color-fault)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      <!-- Active fault path -->
+      <polyline points="${currentPoints.join(' ')}" fill="none" stroke="var(--fault)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
       
-      <!-- Tracking indicator dot -->
-      <circle cx="${currentX.toFixed(1)}" cy="${currentY.toFixed(1)}" r="5" fill="var(--color-fault)" stroke="var(--color-card)" stroke-width="2" />
+      <!-- Active position dot -->
+      <circle cx="${currentX.toFixed(1)}" cy="${currentY.toFixed(1)}" r="4.5" fill="var(--fault)" stroke="var(--surface)" stroke-width="2"/>
       
       <!-- Axis Labels -->
-      <text x="${padding.left - 6}" y="${getY(0) + 4}" text-anchor="end" fill="var(--color-muted-foreground)" font-size="10" font-family="var(--font-mono)">0</text>
-      <text x="${padding.left - 6}" y="${padding.top + 4}" text-anchor="end" fill="var(--color-muted-foreground)" font-size="10" font-family="var(--font-mono)">${maxFaults}</text>
-      <text x="${width - padding.right}" y="${height - 4}" text-anchor="end" fill="var(--color-muted-foreground)" font-size="10" font-family="var(--font-mono)">Faults over references</text>
+      <text x="${padding.left - 6}" y="${getY(0) + 4}" text-anchor="end" fill="var(--text-secondary)" font-size="10" font-family="var(--font-mono)">0</text>
+      <text x="${padding.left - 6}" y="${padding.top + 4}" text-anchor="end" fill="var(--text-secondary)" font-size="10" font-family="var(--font-mono)">${maxFaults}</text>
+      <text x="${padding.left + chartW}" y="${padding.top - 4}" text-anchor="end" fill="var(--text-secondary)" font-size="10" font-family="var(--font-mono)">Faults: ${currentStep ? currentStep.cumulativeFaults : 0} / ${this.result.totalFaults}</text>
     `;
   }
 
-  /**
-   * Triggers micro-animation for a page hit.
-   * @param {HTMLElement} element
-   */
   triggerPulseAnimation(element) {
     element.classList.remove('anim-pulse-hit');
-    void element.offsetWidth; // Force reflow
+    void element.offsetWidth;
     element.classList.add('anim-pulse-hit');
   }
 
-  /**
-   * Triggers micro-animation for a page load or replacement.
-   * @param {HTMLElement} element
-   */
   triggerDropAnimation(element) {
     element.classList.remove('anim-drop-in');
-    void element.offsetWidth; // Force reflow
+    void element.offsetWidth;
     element.classList.add('anim-drop-in');
   }
 
-  /**
-   * Updates play button text and icon.
-   * @param {boolean} playing
-   */
   updatePlayButtonState(playing) {
     if (!this.el.btnPlay) return;
-    if (playing) {
-      this.el.btnPlay.innerHTML = `
-        <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <rect x="6" y="4" width="4" height="16" rx="1"/>
-          <rect x="14" y="4" width="4" height="16" rx="1"/>
-        </svg>
-        <span>Pause</span>
-      `;
-      this.el.btnPlay.setAttribute('aria-label', 'Pause simulation');
-    } else {
-      this.el.btnPlay.innerHTML = `
-        <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <polygon points="5 3 19 12 5 21 5 3"/>
-        </svg>
-        <span>Play</span>
-      `;
-      this.el.btnPlay.setAttribute('aria-label', 'Play simulation');
-    }
+    this.el.btnPlay.textContent = playing ? 'Pause' : 'Play';
   }
 
-  /**
-   * Teardown timer on unload.
-   */
   destroy() {
     this.pause();
   }

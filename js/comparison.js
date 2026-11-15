@@ -1,7 +1,7 @@
 /**
- * FrameLab - Algorithm Comparison Module
+ * FrameLab — Memory Atlas Comparison Module
  * Runs simultaneous simulations across FIFO, LRU, and Optimal algorithms,
- * renders metrics tables, comparative SVG bar charts, and fault trajectory curves.
+ * renders metrics tables, comparative bar tracks, and fault trajectory curves.
  */
 
 import { simulate, ALGORITHMS } from './algorithms.js';
@@ -10,20 +10,17 @@ const ALGO_DISPLAY_CONFIG = {
   [ALGORITHMS.FIFO]: {
     name: 'FIFO',
     title: 'First-In, First-Out',
-    color: '#3b82f6', // Bright Blue
-    dash: 'solid'
+    color: '#3859D6' // Primary Blue
   },
   [ALGORITHMS.LRU]: {
     name: 'LRU',
     title: 'Least Recently Used',
-    color: '#06b6d4', // Cyan / Teal
-    dash: 'solid'
+    color: '#087F72' // Scientific Teal
   },
   [ALGORITHMS.OPTIMAL]: {
     name: 'Optimal',
     title: 'Belady’s MIN (Theoretical)',
-    color: '#10b981', // Emerald Green
-    dash: 'solid'
+    color: '#8762B8' // Scientific Violet
   }
 };
 
@@ -43,7 +40,7 @@ export class ComparisonController {
    */
   render(sequence, frameCount) {
     if (!sequence || sequence.length === 0) {
-      this.renderEmptyState('Please provide a valid reference string in the Simulator to run comparisons.');
+      this.renderEmptyState('Enter a valid reference sequence in the Simulator to run comparisons.');
       return;
     }
 
@@ -93,9 +90,9 @@ export class ComparisonController {
         <th scope="col">Algorithm</th>
         <th scope="col">Faults</th>
         <th scope="col">Hits</th>
-        <th scope="col">Replacements</th>
         <th scope="col">Fault Rate</th>
         <th scope="col">Hit Rate</th>
+        <th scope="col">Replacements</th>
         <th scope="col">Outcome</th>
       </tr>
     `;
@@ -106,11 +103,11 @@ export class ComparisonController {
       if (isWinner) tr.className = 'row-best';
 
       const tdAlgo = document.createElement('td');
+      tdAlgo.className = 'algo-cell';
       tdAlgo.innerHTML = `
-        <div class="algo-name-cell">
-          <span class="algo-color-swatch" style="background-color: ${r.config.color}"></span>
+        <div class="algo-swatch-badge">
+          <span class="algo-swatch-dot" style="background-color: ${r.config.color}"></span>
           <strong>${r.config.name}</strong>
-          <span class="algo-subtitle">${r.config.title}</span>
         </div>
       `;
 
@@ -122,10 +119,6 @@ export class ComparisonController {
       tdHits.className = 'font-mono';
       tdHits.textContent = String(r.sim.totalHits);
 
-      const tdReplacements = document.createElement('td');
-      tdReplacements.className = 'font-mono';
-      tdReplacements.textContent = String(r.sim.totalReplacements);
-
       const tdFaultRate = document.createElement('td');
       tdFaultRate.className = 'font-mono';
       tdFaultRate.textContent = `${r.sim.faultPercentage.toFixed(1)}%`;
@@ -134,9 +127,13 @@ export class ComparisonController {
       tdHitRate.className = 'font-mono';
       tdHitRate.textContent = `${r.sim.hitPercentage.toFixed(1)}%`;
 
+      const tdReplacements = document.createElement('td');
+      tdReplacements.className = 'font-mono';
+      tdReplacements.textContent = String(r.sim.totalReplacements);
+
       const tdOutcome = document.createElement('td');
       if (isWinner) {
-        tdOutcome.innerHTML = `<span class="badge badge-success">Fewest Faults (${r.sim.totalFaults})</span>`;
+        tdOutcome.innerHTML = `<span class="badge badge-hit">Optimal Baseline</span>`;
       } else {
         const delta = r.sim.totalFaults - minFaults;
         tdOutcome.innerHTML = `<span class="badge badge-neutral">+${delta} vs Best</span>`;
@@ -145,9 +142,9 @@ export class ComparisonController {
       tr.appendChild(tdAlgo);
       tr.appendChild(tdFaults);
       tr.appendChild(tdHits);
-      tr.appendChild(tdReplacements);
       tr.appendChild(tdFaultRate);
       tr.appendChild(tdHitRate);
+      tr.appendChild(tdReplacements);
       tr.appendChild(tdOutcome);
       tbody.appendChild(tr);
     });
@@ -158,7 +155,7 @@ export class ComparisonController {
   }
 
   /**
-   * Renders comparative SVG bar chart comparing Faults and Hits.
+   * Renders comparative proportional bars.
    *
    * @param {Array} results
    * @param {number} totalRefs
@@ -171,14 +168,14 @@ export class ComparisonController {
 
     results.forEach(r => {
       const row = document.createElement('div');
-      row.className = 'comp-bar-row';
+      row.className = 'comp-bar-item';
 
       const label = document.createElement('div');
-      label.className = 'comp-bar-label';
-      label.innerHTML = `<strong>${r.config.name}</strong><span>${r.sim.totalFaults} faults / ${r.sim.totalHits} hits</span>`;
+      label.className = 'comp-bar-name';
+      label.textContent = r.config.name;
 
       const track = document.createElement('div');
-      track.className = 'comp-bar-track';
+      track.className = 'comp-bar-track-shell';
 
       const faultBar = document.createElement('div');
       faultBar.className = 'comp-bar-fill-fault';
@@ -202,16 +199,18 @@ export class ComparisonController {
       row.appendChild(readout);
       container.appendChild(row);
 
-      // Animate width after DOM attachment
+      // Animate width
       requestAnimationFrame(() => {
-        faultBar.style.width = `${(r.sim.totalFaults / totalRefs) * 100}%`;
-        hitBar.style.width = `${(r.sim.totalHits / totalRefs) * 100}%`;
+        requestAnimationFrame(() => {
+          faultBar.style.width = `${(r.sim.totalFaults / totalRefs) * 100}%`;
+          hitBar.style.width = `${(r.sim.totalHits / totalRefs) * 100}%`;
+        });
       });
     });
   }
 
   /**
-   * Renders cumulative fault trajectory line chart across all algorithms in SVG.
+   * Renders cumulative fault trajectory line chart in SVG matching Memory Atlas styling.
    *
    * @param {Array} results
    * @param {number} totalRefs
@@ -221,8 +220,8 @@ export class ComparisonController {
     if (!svg) return;
 
     const width = 640;
-    const height = 240;
-    const padding = { top: 24, right: 90, bottom: 36, left: 40 };
+    const height = 220;
+    const padding = { top: 24, right: 90, bottom: 28, left: 40 };
     const chartW = width - padding.left - padding.right;
     const chartH = height - padding.top - padding.bottom;
 
@@ -231,15 +230,12 @@ export class ComparisonController {
     const getX = stepIdx => padding.left + ((stepIdx + 1) / totalRefs) * chartW;
     const getY = faults => padding.top + chartH - (faults / maxFaults) * chartH;
 
-    // Gridlines and horizontal axes
     let gridLinesSvg = `
-      <line x1="${padding.left}" y1="${getY(0)}" x2="${padding.left + chartW}" y2="${getY(0)}" stroke="var(--color-border)" stroke-width="1.5"/>
-      <line x1="${padding.left}" y1="${getY(maxFaults)}" x2="${padding.left + chartW}" y2="${getY(maxFaults)}" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
-      <line x1="${padding.left}" y1="${getY(maxFaults / 2)}" x2="${padding.left + chartW}" y2="${getY(maxFaults / 2)}" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
+      <line x1="${padding.left}" y1="${getY(0)}" x2="${padding.left + chartW}" y2="${getY(0)}" stroke="var(--border)" stroke-width="1"/>
+      <line x1="${padding.left}" y1="${getY(maxFaults)}" x2="${padding.left + chartW}" y2="${getY(maxFaults)}" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
     `;
 
-    // Polylines for each algorithm
-    const linesSvg = results.map((r, i) => {
+    const linesSvg = results.map((r, j) => {
       const points = [`${padding.left},${getY(0)}`];
       r.sim.steps.forEach((step, idx) => {
         points.push(`${getX(idx).toFixed(1)},${getY(step.cumulativeFaults).toFixed(1)}`);
@@ -248,26 +244,27 @@ export class ComparisonController {
       const finalFaults = r.sim.totalFaults;
       const finalX = getX(totalRefs - 1);
       const finalY = getY(finalFaults);
-
-      // Offset callout labels slightly to prevent overlap if scores match
-      const labelYOffset = (i - 1) * 14;
+      const labelYOffset = (j - 1) * 16;
 
       return `
         <polyline
+          class="crv"
+          pathLength="1"
           points="${points.join(' ')}"
           fill="none"
           stroke="${r.config.color}"
-          stroke-width="2.5"
+          stroke-width="2.2"
           stroke-linecap="round"
           stroke-linejoin="round"
+          style="animation-delay: ${j * 0.15}s"
         />
-        <circle cx="${finalX.toFixed(1)}" cy="${finalY.toFixed(1)}" r="4.5" fill="${r.config.color}" stroke="var(--color-card)" stroke-width="1.5" />
+        <circle cx="${finalX.toFixed(1)}" cy="${finalY.toFixed(1)}" r="4.5" fill="${r.config.color}" stroke="var(--surface)" stroke-width="2"/>
         <text
           x="${finalX + 8}"
           y="${(finalY + 4 + labelYOffset).toFixed(1)}"
           fill="${r.config.color}"
           font-size="11"
-          font-weight="600"
+          font-weight="700"
           font-family="var(--font-mono)"
         >${r.config.name}: ${finalFaults}</text>
       `;
@@ -277,19 +274,13 @@ export class ComparisonController {
       <g>
         ${gridLinesSvg}
         ${linesSvg}
-        <!-- Axis labels -->
-        <text x="${padding.left - 8}" y="${getY(0) + 4}" text-anchor="end" fill="var(--color-muted-foreground)" font-size="10" font-family="var(--font-mono)">0</text>
-        <text x="${padding.left - 8}" y="${getY(maxFaults) + 4}" text-anchor="end" fill="var(--color-muted-foreground)" font-size="10" font-family="var(--font-mono)">${maxFaults}</text>
-        <text x="${padding.left + chartW / 2}" y="${height - 8}" text-anchor="middle" fill="var(--color-muted-foreground)" font-size="11">Reference Sequence Progress &rarr;</text>
-        <text x="${padding.left}" y="${padding.top - 8}" fill="var(--color-muted-foreground)" font-size="11">Cumulative Faults (lower is better)</text>
+        <text x="${padding.left - 8}" y="${getY(0) + 4}" text-anchor="end" fill="var(--text-secondary)" font-size="10" font-family="var(--font-mono)">0</text>
+        <text x="${padding.left - 8}" y="${getY(maxFaults) + 4}" text-anchor="end" fill="var(--text-secondary)" font-size="10" font-family="var(--font-mono)">${maxFaults}</text>
+        <text x="${padding.left + chartW / 2}" y="${height - 6}" text-anchor="middle" fill="var(--text-tertiary)" font-size="10">Page Reference Sequence Progress &rarr;</text>
       </g>
     `;
   }
 
-  /**
-   * Renders empty state when inputs are invalid.
-   * @param {string} message
-   */
   renderEmptyState(message) {
     if (this.el.note) this.el.note.textContent = message;
     if (this.el.table) this.el.table.innerHTML = '';

@@ -1,20 +1,20 @@
 /**
- * FrameLab - Motion and Animations
- * Semantic micro-interactions and transitions with full reduced-motion overrides.
+ * FrameLab — Memory Atlas Motion System
+ * Meaningful physical transitions for page insertion, hits, faults, and evictions.
  */
 
-/* Hit Pulse */
+/* Page Hit: Restrained Teal Glow */
 .anim-pulse-hit {
-  animation: pulseHit 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: hitGlow 400ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-@keyframes pulseHit {
+@keyframes hitGlow {
   0% {
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
   50% {
-    transform: scale(1.06);
-    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.25);
+    transform: scale(1.03);
+    box-shadow: 0 0 0 6px rgba(8, 127, 114, 0.2);
   }
   100% {
     transform: scale(1);
@@ -22,15 +22,15 @@
   }
 }
 
-/* Page Drop-in */
+/* Page Insertion / Fault: Warm Transition */
 .anim-drop-in {
-  animation: dropIn 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: pageInsertion 380ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes dropIn {
+@keyframes pageInsertion {
   0% {
-    transform: translateY(-16px);
-    opacity: 0;
+    transform: translateY(-10px);
+    opacity: 0.4;
   }
   100% {
     transform: translateY(0);
@@ -38,15 +38,50 @@
   }
 }
 
-/* Fade in for tab changes */
-.section-fade-in {
-  animation: fadeIn 250ms ease-in-out;
+/* Eviction Archive Chip Entrance */
+.archive-chip.latest-eviction {
+  animation: evictionPop 300ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-@keyframes fadeIn {
+@keyframes evictionPop {
+  from {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Trajectory Curve Stroke Animation */
+.crv {
+  fill: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  animation: drawStroke 1.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes drawStroke {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Section Change Transition */
+.section-fade-in {
+  animation: sectionReveal 200ms ease-out;
+}
+
+@keyframes sectionReveal {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
@@ -54,18 +89,18 @@
   }
 }
 
-/* Reduced Motion Override */
+/* Prefers Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
+    animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
 
-  .timeline-pill.active {
+  .stream-token.active-token {
     transform: none !important;
   }
 }

@@ -1,6 +1,6 @@
 /**
- * FrameLab - Base Styles
- * CSS reset, typography, accessibility defaults, and base container styles.
+ * FrameLab — Memory Atlas Base Styles
+ * Editorial typography, global resets, accessible focus rings, and scrollbars.
  */
 
 *,
@@ -16,13 +16,14 @@ html {
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-padding-top: var(--space-8);
+  background-color: var(--canvas);
 }
 
 body {
+  margin: 0;
   min-height: 100vh;
-  background-color: var(--color-bg);
-  color: var(--color-foreground);
+  background-color: var(--canvas);
+  color: var(--ink);
   font-family: var(--font-sans);
   font-weight: 400;
   overflow-x: hidden;
@@ -30,29 +31,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Accessible focus styling */
+/* Accessible focus ring */
 :focus-visible {
-  outline: 2px solid var(--color-secondary);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
-/* Typography Defaults */
+/* Headings with Editorial Personality */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--color-foreground);
+  color: var(--ink);
+  font-family: var(--font-sans);
   font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
 }
 
 p {
-  color: var(--color-foreground-muted);
-  line-height: 1.6;
+  color: var(--text-secondary);
+  line-height: 1.65;
   margin-bottom: var(--space-3);
 }
 
 strong, b {
-  font-weight: 600;
-  color: var(--color-foreground);
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .font-mono {
@@ -65,42 +67,40 @@ strong, b {
 }
 
 .mut {
-  color: var(--color-foreground-muted);
+  color: var(--text-secondary);
 }
 
-.text-sm {
-  font-size: var(--text-sm);
-}
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-md { font-size: var(--text-md); }
 
-.text-xs {
-  font-size: var(--text-xs);
-}
-
+.mt-1 { margin-top: var(--space-1); }
 .mt-2 { margin-top: var(--space-2); }
 .mt-4 { margin-top: var(--space-4); }
+.mb-1 { margin-bottom: var(--space-1); }
 .mb-2 { margin-bottom: var(--space-2); }
 .mb-4 { margin-bottom: var(--space-4); }
 
-/* Hidden utility */
 [hidden] {
   display: none !important;
 }
 
-/* Custom scrollbars */
+/* Subtle scientific scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-alt);
+  background: var(--surface-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border-hover);
-  border-radius: var(--radius-sm);
+  background: var(--border-strong);
+  border-radius: var(--radius-xs);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-foreground-subtle);
+  background: var(--text-secondary);
 }
