@@ -3,8 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="FrameLab — Autonomous Interactive Page Replacement Algorithm Simulator for Operating Systems (FIFO, LRU, Optimal).">
-  <title>FrameLab — Page Replacement Algorithm Simulator</title>
+  <meta name="description" content="FrameLab — Memory Atlas: An Interactive Memory Laboratory for Operating Systems Page Replacement Algorithms (FIFO, LRU, Optimal).">
+  <title>FrameLab — Memory Atlas</title>
+
+  <!-- Google Fonts: Manrope (Headings & Interface) + IBM Plex Mono (Technical Readouts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap">
 
   <!-- Modular Stylesheets -->
   <link rel="stylesheet" href="css/tokens.css">
@@ -19,53 +24,47 @@
 </head>
 <body>
   <div class="app-wrapper">
-    <!-- Header -->
+    <!-- Clean, Restrained Navigation System -->
     <header class="app-header">
       <div class="header-container">
         <div class="brand-section">
-          <div class="brand-icon" aria-hidden="true">F</div>
-          <div>
+          <div class="brand-glyph" aria-hidden="true">F</div>
+          <div class="brand-title-group">
             <h1 class="brand-title">FrameLab</h1>
-            <span class="brand-subtitle">OS Memory Simulator</span>
+            <span class="brand-subtitle">// Memory Atlas</span>
           </div>
         </div>
 
         <nav class="app-nav" aria-label="Main Navigation">
-          <button type="button" class="nav-tab" data-target="sim" aria-current="page">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            Simulator
-          </button>
-          <button type="button" class="nav-tab" data-target="cmp">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            Compare
-          </button>
-          <button type="button" class="nav-tab" data-target="learn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            Learn
-          </button>
-          <button type="button" id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle light or dark theme" title="Toggle theme">
-            <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </button>
+          <button type="button" class="nav-tab" data-target="sim" aria-current="page">Simulator</button>
+          <button type="button" class="nav-tab" data-target="cmp">Compare</button>
+          <button type="button" class="nav-tab" data-target="learn">Learn</button>
         </nav>
       </div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Main Content Canvas -->
     <main class="app-main">
-      <!-- Section 1: Simulator -->
+      <!-- Section 1: Simulator View -->
       <section id="section-sim" class="section-view">
-        <div class="section-header">
-          <h2 class="section-title">Memory Page Replacement Simulator</h2>
-          <p class="section-description">
-            Configure reference strings and available frames to step through memory allocation, page hit identification, and eviction policies in real time.
+        <!-- Editorial Hero Introduction -->
+        <div class="editorial-hero">
+          <span class="hero-tag">Virtual Memory Laboratory</span>
+          <h2 class="hero-title">A page arrives. Memory makes room.</h2>
+          <p class="hero-subtitle">
+            Explore how operating systems manage limited physical memory through interactive page replacement simulations.
           </p>
         </div>
 
-        <!-- Simulator Configuration Card -->
-        <div class="card">
-          <div class="sim-controls-grid">
-            <div class="form-group">
-              <label for="input-ref" class="form-label">Reference Sequence</label>
+        <!-- Refined Workload Configuration Area -->
+        <div class="workload-panel">
+          <div class="workload-header">
+            <h3 class="workload-title">Workload Configuration</h3>
+          </div>
+
+          <div class="workload-grid">
+            <div class="form-field">
+              <label for="input-ref" class="form-label">Page Reference Sequence</label>
               <input
                 id="input-ref"
                 class="form-input"
@@ -78,7 +77,7 @@
               >
             </div>
 
-            <div class="form-group">
+            <div class="form-field">
               <label for="input-frames" class="form-label">Frames (1–10)</label>
               <input
                 id="input-frames"
@@ -90,306 +89,303 @@
               >
             </div>
 
-            <div class="form-group">
-              <label for="select-algo" class="form-label">Algorithm</label>
+            <div class="form-field">
+              <label for="select-algo" class="form-label">Replacement Policy</label>
               <select id="select-algo" class="form-select">
-                <option value="FIFO">FIFO (First-In First-Out)</option>
+                <option value="FIFO">FIFO (First-In, First-Out)</option>
                 <option value="LRU">LRU (Least Recently Used)</option>
                 <option value="OPTIMAL">Optimal (Belady’s MIN)</option>
               </select>
             </div>
 
             <button type="button" id="btn-run" class="btn btn-primary">
-              <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
               <span>Run Simulation</span>
             </button>
           </div>
 
-          <!-- Quick Reference String Presets -->
-          <div class="presets-row">
-            <span class="presets-label">Quick Presets:</span>
+          <!-- Quick Reference Presets -->
+          <div class="presets-group">
+            <span class="presets-label">Workload Presets:</span>
             <button type="button" class="preset-chip" data-seq="7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2" data-frames="3">Mandatory Benchmark (7,0,1,2...)</button>
-            <button type="button" class="preset-chip" data-seq="1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5" data-frames="3">Belady's Anomaly String</button>
-            <button type="button" class="preset-chip" data-seq="2, 3, 2, 1, 5, 2, 4, 5, 3, 2, 5, 2" data-frames="4">High Locality String</button>
-            <button type="button" class="preset-chip" data-seq="1, 2, 3, 4, 1, 2, 3, 4" data-frames="3">Simple Loop</button>
+            <button type="button" class="preset-chip" data-seq="1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5" data-frames="3">Belady's Anomaly (1,2,3,4...)</button>
+            <button type="button" class="preset-chip" data-seq="2, 3, 2, 1, 5, 2, 4, 5, 3, 2, 5, 2" data-frames="4">Temporal Locality</button>
+            <button type="button" class="preset-chip" data-seq="1, 2, 3, 4, 1, 2, 3, 4" data-frames="3">Loop Pattern</button>
           </div>
 
           <div id="input-ref-error" class="form-error" role="alert"></div>
         </div>
 
-        <!-- Simulation Stage Card -->
-        <div id="simulator-stage-box" class="card">
+        <!-- Simulator Signature Workspace -->
+        <div id="simulator-stage-box" class="simulator-workspace">
           <!-- Playback Toolbar -->
-          <div class="playback-toolbar">
-            <div class="playback-btn-group">
+          <div class="playback-bar">
+            <div class="playback-controls-group">
               <button type="button" id="btn-prev" class="btn btn-outline btn-sm" aria-label="Step Backward">
-                <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
                 <span>Back</span>
               </button>
-              <button type="button" id="btn-play" class="btn btn-secondary btn-sm" aria-label="Play simulation">
-                <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <button type="button" id="btn-play" class="btn btn-primary btn-sm" aria-label="Play simulation">
                 <span>Play</span>
               </button>
               <button type="button" id="btn-next" class="btn btn-outline btn-sm" aria-label="Step Forward">
                 <span>Next</span>
-                <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
               </button>
-              <button type="button" id="btn-reset" class="btn btn-ghost btn-sm" aria-label="Reset simulation to step 0">
-                <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              <button type="button" id="btn-reset" class="btn btn-ghost btn-sm" aria-label="Reset simulation">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
                 <span>Reset</span>
               </button>
             </div>
 
-            <div class="speed-control-group">
-              <label for="speed-slider">Speed:</label>
+            <div class="speed-control-box">
+              <label for="speed-slider">Speed</label>
               <input id="speed-slider" class="speed-slider" type="range" min="1" max="6" value="3" aria-label="Simulation speed">
-              <span id="step-counter" class="step-indicator" aria-live="polite">Step 0 of 0</span>
+              <span id="step-counter" class="step-readout" aria-live="polite">Step 0 of 0</span>
             </div>
           </div>
 
-          <!-- Progress Indicator -->
-          <progress id="sim-progress" class="sim-progress-bar" value="0" max="1" aria-label="Simulation progress bar"></progress>
+          <!-- Simulation Progress Rail -->
+          <div class="progress-rail" aria-label="Simulation Progress">
+            <div id="sim-progress" class="progress-fill"></div>
+          </div>
 
-          <!-- Interactive Memory Stage -->
-          <div class="simulation-stage">
-            <!-- Current Page Requested Box -->
-            <div class="current-page-wrapper">
-              <div id="current-page-box" class="current-page-box">
-                <span class="current-page-label">Requested</span>
-                <span id="current-page-val" class="current-page-value">–</span>
+          <!-- Reference Stream Timeline -->
+          <div class="reference-stream-section">
+            <div class="stream-label">
+              <span>Reference Stream Sequence</span>
+              <span class="text-xs mut">Click any token to inspect step</span>
+            </div>
+            <div id="timeline-container" class="stream-track" role="toolbar" aria-label="Reference Page Stream"></div>
+          </div>
+
+          <!-- THE SIGNATURE COMPONENT: Physical Memory Architecture Stage -->
+          <div class="memory-architecture-stage">
+            <!-- Ingestion Gateway: Incoming Page -->
+            <div class="ingestion-gateway">
+              <span class="gateway-label">Requested</span>
+              <div id="current-page-box" class="incoming-page-cell">
+                <span id="current-page-val" class="incoming-page-val font-mono">–</span>
               </div>
-              <div class="stage-arrow" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </div>
+              <div class="gateway-flow-indicator" aria-hidden="true">&rarr;</div>
             </div>
 
-            <!-- Frames Container -->
-            <div class="frames-container-wrapper">
-              <span class="frames-header-label">Physical Memory Frames</span>
-              <div id="frames-container" class="frames-grid" role="list" aria-label="Physical Memory Frames"></div>
+            <!-- Physical Memory Bank: Grid of Memory Cells -->
+            <div class="memory-bank-wrapper">
+              <div class="memory-bank-header">
+                <span class="memory-bank-title">Physical Memory Frames (RAM)</span>
+              </div>
+              <div id="frames-container" class="memory-bank-grid" role="list" aria-label="Physical Memory Frames"></div>
             </div>
 
-            <!-- Disk / Evicted Pool Panel -->
-            <div class="disk-pool-panel">
-              <span class="disk-pool-title">Evicted (Disk)</span>
-              <div id="disk-pool-list" class="disk-pool-list" aria-label="List of evicted pages"></div>
+            <!-- Eviction Archive: Secondary Storage (Disk) -->
+            <div class="eviction-archive">
+              <div class="archive-header">Evicted to Disk</div>
+              <div id="disk-pool-list" class="archive-list" aria-label="Pages evicted to secondary store"></div>
             </div>
           </div>
 
-          <!-- Educational Explanation Narrative -->
-          <div id="explanation-box" class="explanation-card neutral">
-            <p id="explanation-text" class="explanation-content" aria-live="polite">
-              Click Run Simulation, then press Next or Play to observe each memory replacement decision.
+          <!-- Editorial Decision Narrative -->
+          <div id="explanation-box" class="editorial-narrative-card">
+            <p id="explanation-text" class="narrative-content" aria-live="polite">
+              Press Next or Play to observe page ingestion and eviction decisions.
             </p>
           </div>
 
-          <!-- Reference Timeline -->
-          <div class="timeline-card">
-            <div class="frames-header-label">Reference Timeline (Click any step to inspect)</div>
-            <div id="timeline-container" class="timeline-track" role="toolbar" aria-label="Reference Sequence Steps"></div>
-          </div>
-
-          <!-- Real-time Cumulative Metrics -->
-          <div class="stats-grid">
-            <div class="stat-box">
-              <span class="stat-label">Page Faults</span>
-              <span id="stat-faults" class="stat-value font-mono">0</span>
+          <!-- Live Metrics Strip -->
+          <div class="metrics-strip">
+            <div class="metric-cell">
+              <span class="metric-label">Page Faults</span>
+              <span id="stat-faults" class="metric-value fault-metric font-mono">0</span>
             </div>
-            <div class="stat-box">
-              <span class="stat-label">Page Hits</span>
-              <span id="stat-hits" class="stat-value font-mono">0</span>
+            <div class="metric-cell">
+              <span class="metric-label">Page Hits</span>
+              <span id="stat-hits" class="metric-value hit-metric font-mono">0</span>
             </div>
-            <div class="stat-box">
-              <span class="stat-label">Replacements</span>
-              <span id="stat-replacements" class="stat-value font-mono">0</span>
+            <div class="metric-cell">
+              <span class="metric-label">Replacements</span>
+              <span id="stat-replacements" class="metric-value replacement-metric font-mono">0</span>
             </div>
-            <div class="stat-box">
-              <span class="stat-label">Fault Ratio</span>
-              <span id="stat-fault-rate" class="stat-value font-mono">0.0%</span>
+            <div class="metric-cell">
+              <span class="metric-label">Fault Ratio</span>
+              <span id="stat-fault-rate" class="metric-value font-mono">0.0%</span>
             </div>
-            <div class="stat-box">
-              <span class="stat-label">Hit Ratio</span>
-              <span id="stat-hit-rate" class="stat-value font-mono">0.0%</span>
+            <div class="metric-cell">
+              <span class="metric-label">Hit Ratio</span>
+              <span id="stat-hit-rate" class="metric-value font-mono">0.0%</span>
             </div>
           </div>
 
-          <!-- Real-time SVG Fault Curve -->
-          <div class="fault-curve-card">
-            <div class="frames-header-label mb-2">Fault Accumulation Over Sequence</div>
-            <svg id="fault-curve-svg" class="fault-curve-svg" viewBox="0 0 600 120" role="img" aria-label="Cumulative page fault trajectory"></svg>
+          <!-- Trajectory Sparkline -->
+          <div class="sparkline-section">
+            <div class="sparkline-label">Cumulative Page Fault Progression</div>
+            <svg id="fault-curve-svg" class="fault-sparkline-svg" viewBox="0 0 600 110" role="img" aria-label="Cumulative page faults over time"></svg>
           </div>
         </div>
       </section>
 
-      <!-- Section 2: Comparison -->
+      <!-- Section 2: Comparison View -->
       <section id="section-cmp" class="section-view" hidden>
         <div class="section-header">
           <h2 class="section-title">Algorithm Performance Comparison</h2>
           <p class="section-description">
-            Evaluate FIFO, LRU, and Optimal on the exact same reference sequence and frame allotment to determine the optimal memory utilization.
+            Evaluate FIFO, LRU, and Optimal on the exact same reference sequence and frame allotment to determine relative memory efficiency.
           </p>
         </div>
 
-        <div class="card">
+        <div class="comparison-workspace">
           <p id="cmp-note" class="comparison-note"></p>
-          <div class="table-responsive-wrapper">
+          <div class="comparison-table-wrapper">
             <table id="cmp-table" class="comparison-table"></table>
           </div>
         </div>
 
-        <div class="card">
-          <h3 class="card-title mb-2">Fault & Hit Ratio Breakdown</h3>
-          <p class="mut text-sm">Visualizes the percentage breakdown of page faults (red) vs page hits (green) for each algorithm.</p>
-          <div id="cmp-bars" class="comp-bar-container"></div>
+        <div class="comparison-workspace">
+          <h3 class="card-title mb-2">Fault &amp; Hit Breakdown</h3>
+          <p class="mut text-sm">Visualizes the percentage breakdown of page faults (coral) vs page hits (teal) for each algorithm.</p>
+          <div id="cmp-bars" class="comp-bars-wrapper"></div>
         </div>
 
-        <div class="card trajectory-chart-card">
-          <h3 class="card-title mb-2">Fault Accumulation Trajectory (Lower is Better)</h3>
-          <p class="mut text-sm">Displays how page faults accumulate across the reference sequence. The flattest curve represents the most efficient strategy.</p>
-          <svg id="cmp-trajectory-svg" class="trajectory-svg" viewBox="0 0 640 240" role="img" aria-label="Cumulative Fault Trajectories Chart"></svg>
+        <div class="comparison-workspace trajectory-card">
+          <h3 class="card-title mb-2">Fault Accumulation Trajectory (Flatter is Better)</h3>
+          <p class="mut text-sm">Displays cumulative fault divergence as references arrive. Optimal represents the theoretical minimum bound.</p>
+          <svg id="cmp-trajectory-svg" class="trajectory-svg" viewBox="0 0 640 220" role="img" aria-label="Cumulative Fault Trajectories"></svg>
         </div>
       </section>
 
-      <!-- Section 3: Learn -->
+      <!-- Section 3: Learn View -->
       <section id="section-learn" class="section-view" hidden>
         <div class="section-header">
           <h2 class="section-title">Understanding Page Replacement Algorithms</h2>
           <p class="section-description">
-            A comprehensive guide to virtual memory management, eviction heuristics, hardware trade-offs, and theoretical bounds.
+            A guide to virtual memory principles, eviction heuristics, hardware complexity, and theoretical bounds.
           </p>
         </div>
 
-        <!-- 3 Core Algorithms Deep Dive Cards -->
-        <div class="learning-grid">
-          <!-- FIFO Card -->
-          <div class="learning-card">
-            <div class="learning-card-header">
-              <h3>FIFO (First-In, First-Out)</h3>
-              <span class="badge badge-primary">Queue Based</span>
-            </div>
-            <div class="learning-body">
-              <p>The operating system maintains a FIFO queue of all pages currently in memory. When a page must be replaced, the page at the head of the queue (the oldest loaded page) is chosen.</p>
-              
-              <div class="learning-section-title">Time Complexity</div>
-              <p><span class="complexity-tag">O(1)</span> with queue pointers / circular buffer.</p>
-              
-              <div class="learning-section-title">Advantages</div>
-              <p>Extremely simple to implement with minimal hardware overhead. Requires only a queue of frame pointers.</p>
-              
-              <div class="learning-section-title">Disadvantages & Limitations</div>
-              <p>May evict heavily used initialization modules or shared libraries simply because they were loaded early. Susceptible to <strong>Belady's Anomaly</strong>.</p>
+        <div class="learning-editorial-container">
+          <!-- Algorithm Articles Grid -->
+          <div class="algorithm-deep-dive-grid">
+            <!-- FIFO -->
+            <article class="algorithm-article">
+              <div class="article-header">
+                <h3 class="article-title">FIFO (First-In, First-Out)</h3>
+                <span class="badge badge-primary">Queue Based</span>
+              </div>
+              <div class="article-body">
+                <p>The operating system maintains a queue of all pages resident in memory. When a page fault requires replacement, the page at the head of the queue (the oldest loaded page) is selected as victim.</p>
+                
+                <div class="section-label">Time Complexity</div>
+                <p><span class="complexity-chip">O(1)</span> with queue pointers / circular buffer.</p>
+                
+                <div class="section-label">Limitations</div>
+                <p>May evict frequently used modules merely because they were loaded early. Susceptible to <strong>Belady's Anomaly</strong>.</p>
+              </div>
+            </article>
+
+            <!-- LRU -->
+            <article class="algorithm-article">
+              <div class="article-header">
+                <h3 class="article-title">LRU (Least Recently Used)</h3>
+                <span class="badge badge-hit">Recency Based</span>
+              </div>
+              <div class="article-body">
+                <p>Evicts the page that has not been accessed for the longest period of time, leveraging the principle of temporal locality (recent past predicts future access patterns).</p>
+                
+                <div class="section-label">Time Complexity</div>
+                <p><span class="complexity-chip">O(1)</span> with hash map + doubly linked list; <span class="complexity-chip">O(f)</span> with scan.</p>
+                
+                <div class="section-label">Advantages</div>
+                <p>Proven to be a <strong>stack algorithm</strong>: completely immune to Belady's Anomaly.</p>
+              </div>
+            </article>
+
+            <!-- Optimal -->
+            <article class="algorithm-article">
+              <div class="article-header">
+                <h3 class="article-title">Optimal (Belady’s MIN)</h3>
+                <span class="badge badge-replacement">Theoretical</span>
+              </div>
+              <div class="article-body">
+                <p>Replaces the page whose next reference occurs farthest in the future. If a page will never be used again, it is an immediate candidate for eviction.</p>
+                
+                <div class="section-label">Time Complexity</div>
+                <p><span class="complexity-chip">O(f · n)</span> per reference simulation scan.</p>
+                
+                <div class="section-label">Theoretical Bound</div>
+                <p><strong>Unrealizable in general operating systems</strong> because an OS cannot foresee future process requests. Serves as the gold standard benchmark.</p>
+              </div>
+            </article>
+          </div>
+
+          <!-- Comparative Trade-Off Matrix -->
+          <div class="tradeoff-panel">
+            <h3 class="tradeoff-title">Comparative Trade-Off Matrix</h3>
+            <p class="mut text-sm">Summary of eviction criteria, operational overhead, and real-world OS feasibility.</p>
+            <div class="tradeoff-table-wrapper">
+              <table class="tradeoff-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Eviction Criterion</th>
+                    <th>Hardware Overhead</th>
+                    <th>Real-World Feasibility</th>
+                    <th>Belady's Anomaly?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>FIFO</strong></td>
+                    <td>Longest in memory</td>
+                    <td>Minimal (Queue pointer)</td>
+                    <td>Feasible</td>
+                    <td><span class="badge badge-fault">Vulnerable</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>LRU</strong></td>
+                    <td>Longest unreferenced</td>
+                    <td>High (Timestamps / Shift Registers)</td>
+                    <td>Approximated (CLOCK algorithm)</td>
+                    <td><span class="badge badge-hit">Immune</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Optimal</strong></td>
+                    <td>Farthest future access</td>
+                    <td>None (Requires prescience)</td>
+                    <td>Theoretical only</td>
+                    <td><span class="badge badge-hit">Immune</span></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <!-- LRU Card -->
-          <div class="learning-card">
-            <div class="learning-card-header">
-              <h3>LRU (Least Recently Used)</h3>
-              <span class="badge badge-success">Recency Based</span>
+          <!-- Belady's Anomaly Laboratory -->
+          <div class="belady-lab-panel">
+            <div class="belady-lab-header">
+              <div>
+                <h3 class="tradeoff-title">Belady's Anomaly Demonstration</h3>
+                <p class="mut text-sm">Observe how increasing physical memory frames can paradoxically increase page faults under FIFO.</p>
+              </div>
+              <button type="button" id="btn-test-belady" class="btn btn-primary btn-sm">
+                Demonstrate Anomaly
+              </button>
             </div>
-            <div class="learning-body">
-              <p>Replaces the page that has not been referenced for the longest period of time, leveraging the principle of temporal locality (recent past predicts near future).</p>
-              
-              <div class="learning-section-title">Time Complexity</div>
-              <p><span class="complexity-tag">O(1)</span> per reference with doubly linked list & hash map; <span class="complexity-tag">O(f)</span> with scan.</p>
-              
-              <div class="learning-section-title">Advantages</div>
-              <p>Consistently performs very well in general workloads. Mathematically proven to be a <strong>stack algorithm</strong>, completely immune to Belady's Anomaly.</p>
-              
-              <div class="learning-section-title">Disadvantages & Limitations</div>
-              <p>Requires dedicated hardware support (timestamps or counter registers on every memory reference) to avoid significant CPU overhead. Real OS kernels use approximations like CLOCK or aging.</p>
+
+            <p class="text-sm font-mono mut">
+              Canonical Sequence: <strong>1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5</strong>
+            </p>
+
+            <div id="belady-result-box" class="mt-4">
+              <div class="callout callout-info">
+                Click <strong>Demonstrate Anomaly</strong> above to run parallel FIFO simulations for 3 frames against 4 frames.
+              </div>
             </div>
-          </div>
 
-          <!-- Optimal Card -->
-          <div class="learning-card">
-            <div class="learning-card-header">
-              <h3>Optimal (Belady’s MIN)</h3>
-              <span class="badge badge-warning">Theoretical Benchmark</span>
+            <div class="mt-4">
+              <button type="button" id="btn-load-belady" class="btn btn-outline btn-sm">
+                Load this sequence into Simulator
+              </button>
             </div>
-            <div class="learning-body">
-              <p>Replaces the page whose next reference occurs farthest in the future. If a page will never be referenced again, it is an immediate candidate for eviction.</p>
-              
-              <div class="learning-section-title">Time Complexity</div>
-              <p><span class="complexity-tag">O(f · n)</span> per reference simulation scan.</p>
-              
-              <div class="learning-section-title">Theoretical Bound</div>
-              <p>Mathematically guarantees the <strong>minimum possible number of page faults</strong> for any fixed number of frames.</p>
-              
-              <div class="learning-section-title">Practical Limitation</div>
-              <p><strong>Unrealizable in general operating systems</strong> because an OS cannot foresee future page requests of arbitrary user processes. Used strictly as a gold standard to benchmark practical heuristics.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Comparative Tradeoff Table -->
-        <div class="card">
-          <h3 class="card-title">Comparative Trade-Off Matrix</h3>
-          <div class="table-responsive-wrapper mt-4">
-            <table class="complexity-matrix-table">
-              <thead>
-                <tr>
-                  <th>Algorithm</th>
-                  <th>Eviction Criterion</th>
-                  <th>Hardware Overhead</th>
-                  <th>Real-World Realizability</th>
-                  <th>Belady's Anomaly?</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>FIFO</strong></td>
-                  <td>Longest in memory</td>
-                  <td>Very Low (Queue pointer)</td>
-                  <td>Yes (Historically used)</td>
-                  <td><span class="badge badge-destructive">Vulnerable</span></td>
-                </tr>
-                <tr>
-                  <td><strong>LRU</strong></td>
-                  <td>Longest unreferenced</td>
-                  <td>High (Timestamps / Shift Registers)</td>
-                  <td>Approximated via CLOCK</td>
-                  <td><span class="badge badge-success">Immune</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Optimal</strong></td>
-                  <td>Farthest future reference</td>
-                  <td>None (Requires prescience)</td>
-                  <td><span class="badge badge-warning">Theoretical Only</span></td>
-                  <td><span class="badge badge-success">Immune</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Interactive Belady's Anomaly Demonstration Card -->
-        <div class="belady-interactive-card">
-          <div class="card-header">
-            <div>
-              <h3 class="card-title">Interactive Belady's Anomaly Demonstration</h3>
-              <p class="mut text-sm">Observe how increasing physical memory frames can counterintuitively cause MORE page faults under FIFO.</p>
-            </div>
-            <button type="button" id="btn-test-belady" class="btn btn-primary btn-sm">
-              <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              <span>Demonstrate Anomaly</span>
-            </button>
-          </div>
-
-          <p class="text-sm">
-            Sequence: <code class="font-mono bold">1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5</code>
-          </p>
-
-          <div id="belady-result-box" class="mt-4">
-            <div class="callout callout-info">
-              Click <strong>Demonstrate Anomaly</strong> above to run side-by-side FIFO simulations comparing 3 frames against 4 frames.
-            </div>
-          </div>
-
-          <div class="mt-4">
-            <button type="button" id="btn-load-belady" class="btn btn-outline btn-sm">
-              Load this sequence into Simulator
-            </button>
           </div>
         </div>
       </section>
@@ -399,12 +395,10 @@
     <footer class="app-footer">
       <div class="footer-container">
         <div>
-          <strong>FrameLab</strong> — Interactive Page Replacement Workbench
+          <strong>FrameLab</strong> — Memory Atlas
         </div>
-        <div class="footer-links">
-          <span>Pure Vanilla ES Modules</span>
-          <span>•</span>
-          <span>Zero Runtime Dependencies</span>
+        <div class="footer-meta">
+          Pure ES Modules &bull; Zero Runtime Dependencies
         </div>
       </div>
     </footer>

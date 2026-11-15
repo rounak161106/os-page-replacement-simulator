@@ -1,66 +1,61 @@
 /**
- * FrameLab - Design Tokens
- * Complete semantic variable system supporting Light & Dark themes.
+ * FrameLab — Memory Atlas Design Tokens
+ * Scientific visualization workspace combined with an editorial educational experience.
  */
 
 :root {
-  /* Surface & Background */
-  --color-bg: #f8fafc;
-  --color-bg-alt: #f1f5f9;
-  --color-card: #ffffff;
-  --color-card-elevated: #ffffff;
-  --color-border: #e2e8f0;
-  --color-border-subtle: #edf2f7;
-  --color-border-hover: #cbd5e1;
+  /* Core Canvas & Surfaces */
+  --canvas: #F3F6F8;
+  --surface: #FFFFFF;
+  --surface-secondary: #EAF0F4;
+  --surface-tertiary: #DEE6ED;
 
   /* Typography Colors */
-  --color-foreground: #0f172a;
-  --color-foreground-muted: #475569;
-  --color-foreground-subtle: #64748b;
-  --color-foreground-inverse: #ffffff;
+  --ink: #19293A;
+  --text-secondary: #627284;
+  --text-tertiary: #8A99A8;
+  --border: #DCE3E9;
+  --border-strong: #BDC9D5;
+  --border-focus: #3859D6;
 
-  /* Brand & Accent */
-  --color-primary: #1e3a5f;
-  --color-primary-hover: #162c47;
-  --color-primary-light: #e8eef6;
-  --color-secondary: #2563eb;
-  --color-secondary-hover: #1d4ed8;
+  /* Brand Accent */
+  --primary: #3859D6;
+  --primary-hover: #2B47B8;
+  --primary-soft: #E8EDFF;
 
-  /* Simulation States */
-  --color-hit: #059669; /* Emerald */
-  --color-hit-hover: #047857;
-  --color-hit-bg: #ecfdf5;
-  --color-hit-border: #a7f3d0;
-  --color-hit-text: #065f46;
+  /* State: Page Hit (Scientific Teal) */
+  --hit: #087F72;
+  --hit-hover: #06665B;
+  --hit-soft: #DDF3EC;
+  --hit-border: #9FD9C9;
 
-  --color-fault: #dc2626; /* Crimson Red */
-  --color-fault-hover: #b91c1c;
-  --color-fault-bg: #fef2f2;
-  --color-fault-border: #fecaca;
-  --color-fault-text: #991b1b;
+  /* State: Page Fault (Warm Terracotta / Coral) */
+  --fault: #C15A37;
+  --fault-hover: #A54828;
+  --fault-soft: #FCEAE3;
+  --fault-border: #F6C8BA;
 
-  --color-replacement: #d97706; /* Amber Gold */
-  --color-replacement-bg: #fffbeb;
-  --color-replacement-border: #fde68a;
-  --color-replacement-text: #92400e;
-
-  /* Status Colors */
-  --color-neutral-bg: #f8fafc;
-  --color-neutral-border: #e2e8f0;
+  /* State: Replacement Victim (Scientific Violet) */
+  --replacement: #8762B8;
+  --replacement-hover: #6F4A9F;
+  --replacement-soft: #F0EAF8;
+  --replacement-border: #D3C2E7;
 
   /* Typography System */
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Font Sizes */
+  /* Typographic Scales */
+  --text-2xs: 0.6875rem; /* 11px */
   --text-xs: 0.75rem;    /* 12px */
   --text-sm: 0.875rem;   /* 14px */
   --text-base: 1rem;     /* 16px */
-  --text-lg: 1.125rem;   /* 18px */
-  --text-xl: 1.25rem;    /* 20px */
-  --text-2xl: 1.5rem;    /* 24px */
-  --text-3xl: 1.875rem;  /* 30px */
-  --text-4xl: 2.25rem;   /* 36px */
+  --text-md: 1.125rem;   /* 18px */
+  --text-lg: 1.25rem;    /* 20px */
+  --text-xl: 1.5rem;     /* 24px */
+  --text-2xl: 2rem;      /* 32px */
+  --text-3xl: 2.75rem;   /* 44px */
+  --text-4xl: 3.5rem;    /* 56px */
 
   /* Spacing Scale */
   --space-1: 0.25rem; /* 4px */
@@ -74,105 +69,21 @@
   --space-12: 3rem;   /* 48px */
 
   /* Radii */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  /* Subtle Scientific Shadows */
+  --shadow-subtle: 0 1px 3px rgba(25, 41, 58, 0.04), 0 1px 2px rgba(25, 41, 58, 0.02);
+  --shadow-card: 0 2px 6px -1px rgba(25, 41, 58, 0.05), 0 1px 3px -1px rgba(25, 41, 58, 0.03);
+  --shadow-active: 0 8px 20px -4px rgba(56, 89, 214, 0.12), 0 3px 6px -2px rgba(25, 41, 58, 0.04);
+  --shadow-cell-hit: 0 4px 14px -2px rgba(8, 127, 114, 0.25);
+  --shadow-cell-fault: 0 4px 14px -2px rgba(193, 90, 55, 0.25);
 
   /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Dark Mode Scheme */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-bg: #090d16;
-    --color-bg-alt: #0f172a;
-    --color-card: #131c2e;
-    --color-card-elevated: #1a263e;
-    --color-border: #1e293b;
-    --color-border-subtle: #162032;
-    --color-border-hover: #334155;
-
-    --color-foreground: #f8fafc;
-    --color-foreground-muted: #94a3b8;
-    --color-foreground-subtle: #64748b;
-    --color-foreground-inverse: #090d16;
-
-    --color-primary: #3b82f6;
-    --color-primary-hover: #60a5fa;
-    --color-primary-light: #172554;
-    --color-secondary: #60a5fa;
-
-    --color-hit: #10b981;
-    --color-hit-hover: #34d399;
-    --color-hit-bg: #064e3b;
-    --color-hit-border: #047857;
-    --color-hit-text: #6ee7b7;
-
-    --color-fault: #ef4444;
-    --color-fault-hover: #f87171;
-    --color-fault-bg: #450a0a;
-    --color-fault-border: #7f1d1d;
-    --color-fault-text: #fca5a5;
-
-    --color-replacement: #f59e0b;
-    --color-replacement-bg: #451a03;
-    --color-replacement-border: #78350f;
-    --color-replacement-text: #fcd34d;
-
-    --color-neutral-bg: #0f172a;
-    --color-neutral-border: #1e293b;
-
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  }
-}
-
-:root[data-theme="dark"] {
-  --color-bg: #090d16;
-  --color-bg-alt: #0f172a;
-  --color-card: #131c2e;
-  --color-card-elevated: #1a263e;
-  --color-border: #1e293b;
-  --color-border-subtle: #162032;
-  --color-border-hover: #334155;
-
-  --color-foreground: #f8fafc;
-  --color-foreground-muted: #94a3b8;
-  --color-foreground-subtle: #64748b;
-  --color-foreground-inverse: #090d16;
-
-  --color-primary: #3b82f6;
-  --color-primary-hover: #60a5fa;
-  --color-primary-light: #172554;
-  --color-secondary: #60a5fa;
-
-  --color-hit: #10b981;
-  --color-hit-hover: #34d399;
-  --color-hit-bg: #064e3b;
-  --color-hit-border: #047857;
-  --color-hit-text: #6ee7b7;
-
-  --color-fault: #ef4444;
-  --color-fault-hover: #f87171;
-  --color-fault-bg: #450a0a;
-  --color-fault-border: #7f1d1d;
-  --color-fault-text: #fca5a5;
-
-  --color-replacement: #f59e0b;
-  --color-replacement-bg: #451a03;
-  --color-replacement-border: #78350f;
-  --color-replacement-text: #fcd34d;
-
-  --color-neutral-bg: #0f172a;
-  --color-neutral-border: #1e293b;
+  --transition-fast: 140ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-normal: 240ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-spring: 360ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }

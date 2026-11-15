@@ -1,6 +1,6 @@
 /**
  * FrameLab - Main Application Entrypoint
- * Orchestrates navigation routing, theme toggling, input validation,
+ * Orchestrates navigation routing, input validation,
  * preset loading, and sub-controllers initialization.
  */
 
@@ -27,8 +27,6 @@ const dom = {
     cmp: document.getElementById('section-cmp'),
     learn: document.getElementById('section-learn')
   },
-  themeToggleBtn: document.getElementById('theme-toggle'),
-  themeIcon: document.getElementById('theme-icon'),
 
   // Simulator Inputs
   inputRef: document.getElementById('input-ref'),
@@ -79,44 +77,12 @@ const dom = {
  * Initializes the FrameLab application.
  */
 function init() {
-  initTheme();
   initControllers();
   initRouting();
   bindInputEvents();
 
   // Run initial simulation on load
   runSimulationFromInputs();
-}
-
-/**
- * Theme initialization and toggling with localStorage persistence.
- */
-function initTheme() {
-  const savedTheme = localStorage.getItem('framelab_theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-
-  applyTheme(initialTheme);
-
-  if (dom.themeToggleBtn) {
-    dom.themeToggleBtn.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme') || (prefersDark ? 'dark' : 'light');
-      const nextTheme = current === 'dark' ? 'light' : 'dark';
-      applyTheme(nextTheme);
-      localStorage.setItem('framelab_theme', nextTheme);
-    });
-  }
-}
-
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  if (dom.themeIcon) {
-    if (theme === 'dark') {
-      dom.themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
-    } else {
-      dom.themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
-    }
-  }
 }
 
 /**
@@ -222,7 +188,7 @@ function switchView(targetView, updateHash = true) {
     location.hash = targetView;
   }
 
-  // Trigger comparison recalculation when switching to compare tab
+  // Trigger comparison calculation when switching to compare tab
   if (targetView === 'cmp') {
     if (validateAndExtractInputs()) {
       comparisonInstance.render(currentValidatedSequence, currentValidatedFrameCount);
@@ -233,7 +199,7 @@ function switchView(targetView, updateHash = true) {
 }
 
 /**
- * Validates inputs from the form controls and sets module state.
+ * Validates inputs from form controls.
  * @returns {boolean}
  */
 function validateAndExtractInputs() {

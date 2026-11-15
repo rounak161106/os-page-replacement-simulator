@@ -1,5 +1,5 @@
 /**
- * FrameLab - Educational Learning Module
+ * FrameLab — Memory Atlas Educational Learning Module
  * Provides algorithm theory, trade-off analysis, time complexity profiles,
  * and an interactive Belady's Anomaly demonstration.
  */
@@ -44,35 +44,35 @@ export class LearningController {
 
     this.el.beladyResultBox.innerHTML = `
       <div class="belady-comparison-grid">
-        <div class="belady-card ${res3.totalFaults < res4.totalFaults ? 'anomaly-paradox' : ''}">
-          <div class="belady-card-header">
+        <div class="belady-result-card">
+          <div class="article-header">
             <h4>3 Physical Frames</h4>
-            <span class="badge badge-primary">Fewer Frames</span>
+            <span class="badge badge-neutral">Baseline</span>
           </div>
-          <div class="belady-stat">
-            <span class="stat-big font-mono">${res3.totalFaults}</span>
-            <span class="stat-label">Page Faults</span>
+          <div class="belady-stat-readout">
+            <span class="belady-num font-mono">${res3.totalFaults}</span>
+            <span class="text-xs mut">Page Faults (${res3.faultPercentage.toFixed(1)}%)</span>
           </div>
-          <p class="mut text-sm">Fault Rate: ${res3.faultPercentage.toFixed(1)}% (${res3.totalReplacements} replacements)</p>
+          <p class="mut text-xs">${res3.totalReplacements} memory evictions across 12 references.</p>
         </div>
 
-        <div class="belady-card ${res4.totalFaults > res3.totalFaults ? 'anomaly-paradox' : ''}">
-          <div class="belady-card-header">
+        <div class="belady-result-card paradox-card">
+          <div class="article-header">
             <h4>4 Physical Frames</h4>
-            <span class="badge badge-warning">More Frames</span>
+            <span class="badge badge-fault">Anomaly Paradox</span>
           </div>
-          <div class="belady-stat">
-            <span class="stat-big font-mono text-destructive">${res4.totalFaults}</span>
-            <span class="stat-label">Page Faults</span>
+          <div class="belady-stat-readout">
+            <span class="belady-num fault-count font-mono">${res4.totalFaults}</span>
+            <span class="text-xs mut">Page Faults (${res4.faultPercentage.toFixed(1)}%)</span>
           </div>
-          <p class="mut text-sm">Fault Rate: ${res4.faultPercentage.toFixed(1)}% (${res4.totalReplacements} replacements)</p>
+          <p class="mut text-xs">${res4.totalReplacements} memory evictions across 12 references.</p>
         </div>
       </div>
 
       <div class="callout callout-warning mt-4">
-        <strong>Belady's Anomaly Observed!</strong>
-        <p>Adding memory (from 3 frames to 4 frames) increased total page faults from <strong>${res3.totalFaults}</strong> to <strong>${res4.totalFaults}</strong>! This occurs because FIFO is not a "stack algorithm" — the set of pages in a 3-frame memory is not necessarily a subset of the pages in a 4-frame memory at any given point.</p>
-        <p>In contrast, <strong>LRU</strong> and <strong>Optimal</strong> are mathematically proven stack algorithms and can never suffer from Belady's Anomaly.</p>
+        <strong>Belady's Anomaly Verified:</strong>
+        <p>Allocating <em>more</em> physical memory (increasing from 3 frames to 4 frames) paradoxically increased page faults from <strong>${res3.totalFaults}</strong> to <strong>${res4.totalFaults}</strong>! This occurs because FIFO is not a "stack algorithm": the set of pages resident in an n-frame store is not guaranteed to be a strict subset of an (n+1)-frame store.</p>
+        <p>In contrast, <strong>LRU</strong> and <strong>Optimal</strong> are mathematically proven stack algorithms and are permanently immune to Belady's Anomaly.</p>
       </div>
     `;
   }
