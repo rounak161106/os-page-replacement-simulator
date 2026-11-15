@@ -1,0 +1,137 @@
+/**
+ * FrameLab - Comparison Styles
+ * Comparative tables, SVG bar charts, fault accumulation trajectory charts.
+ */
+
+.comparison-note {
+  font-size: var(--text-sm);
+  color: var(--color-foreground-muted);
+  margin-bottom: var(--space-4);
+}
+
+/* Comparison Table */
+.table-responsive-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--text-sm);
+}
+
+.comparison-table th {
+  background-color: var(--color-bg-alt);
+  color: var(--color-foreground-muted);
+  font-weight: 600;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.comparison-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-foreground);
+  vertical-align: middle;
+}
+
+.comparison-table tbody tr:hover {
+  background-color: var(--color-bg-alt);
+}
+
+.comparison-table tr.row-best {
+  background-color: var(--color-hit-bg);
+}
+
+.algo-name-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.algo-color-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.algo-subtitle {
+  font-size: var(--text-xs);
+  color: var(--color-foreground-subtle);
+  font-weight: normal;
+}
+
+/* Bar Chart */
+.comp-bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.comp-bar-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 100px;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.comp-bar-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.comp-bar-label strong {
+  font-size: var(--text-sm);
+}
+
+.comp-bar-label span {
+  font-size: var(--text-xs);
+  color: var(--color-foreground-subtle);
+}
+
+.comp-bar-track {
+  height: 24px;
+  background-color: var(--color-bg-alt);
+  border-radius: var(--radius-sm);
+  display: flex;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.comp-bar-fill-fault {
+  background-color: var(--color-fault);
+  height: 100%;
+  transition: width var(--transition-normal);
+}
+
+.comp-bar-fill-hit {
+  background-color: var(--color-hit);
+  height: 100%;
+  transition: width var(--transition-normal);
+}
+
+.comp-bar-readout {
+  font-size: var(--text-xs);
+  color: var(--color-foreground-muted);
+  text-align: right;
+}
+
+/* Trajectory Line Chart */
+.trajectory-chart-card {
+  margin-top: var(--space-6);
+}
+
+.trajectory-svg {
+  width: 100%;
+  height: 240px;
+  display: block;
+}

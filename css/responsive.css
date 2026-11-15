@@ -1,0 +1,170 @@
+/**
+ * FrameLab - Responsive Design
+ * Breakpoints verified across 1440px, 1280px, 1024px, 768px, 390px, and 375px.
+ */
+
+/* Laptops & Tablets Landscape (<= 1024px) */
+@media (max-width: 1024px) {
+  .header-container {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .app-main {
+    padding: var(--space-4) var(--space-4) var(--space-8);
+  }
+
+  .sim-controls-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sim-controls-grid .form-group:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .simulation-stage {
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4);
+  }
+
+  .disk-pool-panel {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: auto;
+    min-height: 80px;
+  }
+
+  .disk-pool-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-height: 120px;
+  }
+}
+
+/* Tablets Portrait (<= 768px) */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .app-nav {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: var(--space-1);
+  }
+
+  .playback-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .playback-btn-group {
+    justify-content: space-between;
+  }
+
+  .speed-control-group {
+    justify-content: space-between;
+  }
+
+  .simulation-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .current-page-wrapper {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .current-page-box {
+    width: 80px;
+    height: 100px;
+  }
+
+  .frame-slot {
+    width: 76px;
+    height: 104px;
+  }
+
+  .slot-value {
+    font-size: var(--text-2xl);
+  }
+
+  .comp-bar-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+
+  .comp-bar-readout {
+    text-align: left;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile Screens (<= 480px, including 390px and 375px) */
+@media (max-width: 480px) {
+  .header-container {
+    padding: var(--space-3);
+  }
+
+  .brand-title {
+    font-size: var(--text-lg);
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .nav-tab {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    min-height: 44px; /* Accessible touch target */
+  }
+
+  .sim-controls-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    min-height: 44px; /* Accessible touch target */
+  }
+
+  .frame-slot {
+    width: 68px;
+    height: 96px;
+  }
+
+  .slot-value {
+    font-size: var(--text-xl);
+  }
+
+  .current-page-box {
+    width: 68px;
+    height: 96px;
+  }
+
+  .timeline-pill {
+    flex: 0 0 42px;
+    height: 48px;
+  }
+
+  .learning-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .belady-comparison-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
