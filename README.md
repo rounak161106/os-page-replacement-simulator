@@ -69,3 +69,22 @@ python -m http.server 3000
 npx serve -l 3000 .
 ```
 Open `http://localhost:3000` in your web browser.
+
+## GitHub Pages Deployment
+
+FrameLab is built with zero runtime dependencies and purely native ES modules, making it 100% compatible with GitHub Pages out of the box with zero build steps or CI pipeline requirements.
+
+### Steps to Deploy:
+1. Push the `main` branch to GitHub:
+   ```bash
+   git push origin main
+   ```
+2. In your GitHub repository:
+   - Navigate to **Settings** > **Pages** (under Code and automation).
+   - Under **Build and deployment** > **Source**, select **Deploy from a branch**.
+   - Under **Branch**, choose `main` and folder `/ (root)`.
+   - Click **Save**.
+3. Within 1–2 minutes, your site will be live at:
+   ```text
+   https://rounak161106.github.io/os-page-replacement-simulator/
+   ```
