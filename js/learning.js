@@ -1,79 +1,71 @@
-/**
- * FrameLab — Memory Atlas Educational Learning Module
- * Provides algorithm theory, trade-off analysis, time complexity profiles,
- * and an interactive Belady's Anomaly demonstration.
- */
+import { simulate } from './algorithms.js';
 
-import { simulateFIFO } from './algorithms.js';
+const BELADY_SEQUENCE = [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5];
 
 export class LearningController {
-  /**
-   * @param {object} elements
-   * @param {Function} [onLoadBeladyPreset] - Callback when user clicks to load Belady preset into simulator
-   */
-  constructor(elements, onLoadBeladyPreset) {
-    this.el = elements;
-    this.onLoadBeladyPreset = onLoadBeladyPreset;
+  constructor(dom, options = {}) {
+    this.dom = dom;
+    this.onLoadBeladyPreset = options.onLoadBeladyPreset || null;
+    this.onNotify = options.onNotify || null;
+
     this.bindEvents();
   }
 
   bindEvents() {
-    if (this.el.btnLoadBelady && this.onLoadBeladyPreset) {
-      this.el.btnLoadBelady.addEventListener('click', () => {
-        const canonicalSequence = [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5];
-        this.onLoadBeladyPreset(canonicalSequence, 3);
-      });
-    }
+    this.dom.btnTestBelady?.addEventListener('click', () => {
+      this.runBeladyProof(true);
+    });
 
-    if (this.el.btnTestBelady) {
-      this.el.btnTestBelady.addEventListener('click', () => {
-        this.runBeladyProof();
-      });
-    }
+    this.dom.btnLoadBelady?.addEventListener('click', () => {
+      if (this.onLoadBeladyPreset) {
+        this.onLoadBeladyPreset([...BELADY_SEQUENCE], 4, 'FIFO');
+      }
+    });
   }
 
-  /**
-   * Renders the interactive Belady's Anomaly proof comparing 3 frames vs 4 frames.
-   */
-  runBeladyProof() {
-    const sequence = [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5];
-    const res3 = simulateFIFO(sequence, 3);
-    const res4 = simulateFIFO(sequence, 4);
+  runBeladyProof(notify = false) {
+    const result3 = simulate('FIFO', BELADY_SEQUENCE, 3);
+    const result4 = simulate('FIFO', BELADY_SEQUENCE, 4);
 
-    if (!this.el.beladyResultBox) return;
+    const faults3 = result3.steps[result3.steps.length - 1]?.cumulativeFaults ?? 0;
+    const faults4 = result4.steps[result4.steps.length - 1]?.cumulativeFaults ?? 0;
+    const hits3 = result3.steps[result3.steps.length - 1]?.cumulativeHits ?? 0;
+    const hits4 = result4.steps[result4.steps.length - 1]?.cumulativeHits ?? 0;
+    const diff = faults4 - faults3;
 
-    this.el.beladyResultBox.innerHTML = `
-      <div class="belady-comparison-grid">
-        <div class="belady-result-card">
-          <div class="article-header">
-            <h4>3 Physical Frames</h4>
-            <span class="badge badge-neutral">Baseline</span>
-          </div>
-          <div class="belady-stat-readout">
-            <span class="belady-num font-mono">${res3.totalFaults}</span>
-            <span class="text-xs mut">Page Faults (${res3.faultPercentage.toFixed(1)}%)</span>
-          </div>
-          <p class="mut text-xs">${res3.totalReplacements} memory evictions across 12 references.</p>
+    const host = this.dom.beladyResultBox;
+    if (!host) return;
+
+    host.hidden = false;
+    host.classList.remove('is-revealing');
+    void host.offsetWidth;
+    host.classList.add('is-revealing');
+
+    host.innerHTML = `
+      <div class="belady-case">
+        <div class="belady-case-top">
+          <span class="belady-case-title">3 Physical Frames (FIFO)</span>
+          <span class="mono-badge">Baseline</span>
         </div>
-
-        <div class="belady-result-card paradox-card">
-          <div class="article-header">
-            <h4>4 Physical Frames</h4>
-            <span class="badge badge-fault">Anomaly Paradox</span>
-          </div>
-          <div class="belady-stat-readout">
-            <span class="belady-num fault-count font-mono">${res4.totalFaults}</span>
-            <span class="text-xs mut">Page Faults (${res4.faultPercentage.toFixed(1)}%)</span>
-          </div>
-          <p class="mut text-xs">${res4.totalReplacements} memory evictions across 12 references.</p>
-        </div>
+        <span class="belady-case-value">${faults3} Page Faults</span>
+        <span class="belady-case-sub">${hits3} Page Hits across ${BELADY_SEQUENCE.length} requests</span>
       </div>
-
-      <div class="callout callout-warning mt-4">
-        <strong>Belady's Anomaly Verified:</strong>
-        <p>Allocating <em>more</em> physical memory (increasing from 3 frames to 4 frames) paradoxically increased page faults from <strong>${res3.totalFaults}</strong> to <strong>${res4.totalFaults}</strong>! This occurs because FIFO is not a "stack algorithm": the set of pages resident in an n-frame store is not guaranteed to be a strict subset of an (n+1)-frame store.</p>
-        <p>In contrast, <strong>LRU</strong> and <strong>Optimal</strong> are mathematically proven stack algorithms and are permanently immune to Belady's Anomaly.</p>
+      <div class="belady-case ${faults4 > faults3 ? 'is-anomaly' : ''}">
+        <div class="belady-case-top">
+          <span class="belady-case-title">4 Physical Frames (FIFO)</span>
+          <span class="mono-badge">+33% RAM</span>
+        </div>
+        <span class="belady-case-value">${faults4} Page Faults</span>
+        <span class="belady-case-sub">${hits4} Page Hits across ${BELADY_SEQUENCE.length} requests</span>
+      </div>
+      <div class="belady-verdict-banner">
+        <span>Adding a 4th frame alters queue eviction at step 7 and increases total page faults on this stream.</span>
+        <span class="belady-delta-badge">${diff > 0 ? `+${diff} FAULT` : `${diff} DELTA`} ANOMALY PROVEN</span>
       </div>
     `;
+
+    if (notify && this.onNotify) {
+      this.onNotify(`Belady verification executed: 3 frames = ${faults3} faults vs 4 frames = ${faults4} faults`, 'fault');
+    }
   }
 }

@@ -1,92 +1,90 @@
-/**
- * FrameLab — Scientific Laboratory Design Tokens
- * Deep obsidian canvas, layered dark glass surfaces, luminescent wireframe borders,
- * electric teal for hits, warm amber for faults, and scientific violet for replacements.
- */
-
 :root {
-  /* Canvas & Surfaces */
-  --canvas: #090d16;
-  --surface: #0f172a;
-  --surface-secondary: #162035;
-  --surface-tertiary: #1e2a44;
-  --surface-hover: rgba(255, 255, 255, 0.06);
+  color-scheme: light;
 
-  /* Typography Colors */
-  --ink: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
-  --border: rgba(255, 255, 255, 0.09);
-  --border-strong: rgba(255, 255, 255, 0.18);
-  --border-focus: #38bdf8;
+  /* Expressive Display + Classroom Clear Sans + Tabular Mono */
+  --font-display: 'Bricolage Grotesque', 'Archivo', system-ui, sans-serif;
+  --font-sans: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 
-  /* Brand / Primary Accent */
-  --primary: #38bdf8;
-  --primary-hover: #0ea5e9;
-  --primary-soft: rgba(56, 189, 248, 0.14);
-  --primary-border: rgba(56, 189, 248, 0.35);
+  /* Architectural Daylight Surfaces (Zero Blue / Zero Purple / Zero Beige Slop) */
+  --brand-ink-bar: #141518;
+  --brand-ink-well: #23252b;
 
-  /* State: Page Hit (Electric Teal) */
-  --hit: #2dd4bf;
-  --hit-hover: #14b8a6;
-  --hit-soft: rgba(45, 212, 191, 0.14);
-  --hit-border: rgba(45, 212, 191, 0.45);
+  --bg-canvas: #eceff2;
+  --bg-surface: #ffffff;
+  --bg-recessed: #e3e7ed;
+  --bg-hover: #dae0e8;
 
-  /* State: Page Fault (Warm Amber-Orange) */
-  --fault: #fb923c;
-  --fault-hover: #f97316;
-  --fault-soft: rgba(251, 146, 60, 0.14);
-  --fault-border: rgba(251, 146, 60, 0.45);
+  /* Charcoal Ink Hierarchy (WCAG AA >= 4.5:1 verified) */
+  --ink-primary: #111317;
+  --ink-secondary: #373c46;
+  --ink-muted: #505662;
 
-  /* State: Replacement Victim (Luminescent Violet) */
-  --replacement: #c084fc;
-  --replacement-hover: #a855f7;
-  --replacement-soft: rgba(192, 132, 252, 0.14);
-  --replacement-border: rgba(192, 132, 252, 0.45);
+  /* Structural & Control Borders (>= 3:1 contrast on white & canvas) */
+  --seam: #d8dde6;
+  --border-sheet: #c6cdd8;
+  --border-control: #616875;
+  --border-control-strong: #2e333d;
+  --border-focus: #b93506;
 
-  /* Typography System */
-  --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* Primary Action Accent: International Vermilion (>= 5.6:1 vs white) */
+  --accent-primary: #b93506;
+  --accent-primary-hover: #972a04;
+  --accent-primary-ink: #ffffff;
+  --accent-soft: #fff0eb;
+  --accent-border: #d95d32;
 
-  /* Typographic Scales */
-  --text-2xs: 0.6875rem; /* 11px */
-  --text-xs: 0.75rem;    /* 12px */
-  --text-sm: 0.875rem;   /* 14px */
-  --text-base: 1rem;     /* 16px */
-  --text-md: 1.125rem;   /* 18px */
-  --text-lg: 1.25rem;    /* 20px */
-  --text-xl: 1.5rem;     /* 24px */
-  --text-2xl: 2rem;      /* 32px */
-  --text-3xl: 2.75rem;   /* 44px */
-  --text-4xl: 3.5rem;    /* 56px */
+  --secondary-trace: #141518;
 
-  /* Spacing Scale */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
+  /* Vivid Semantic Decision Colors (Zero Blue/Purple) */
+  --hit: #047857;
+  --hit-ink: #064e3b;
+  --hit-bg: #d1fae5;
+  --hit-border: #059669;
 
-  /* Radii */
-  --radius-xs: 3px;
+  --fault: #b45309;
+  --fault-ink: #78350f;
+  --fault-bg: #fef3c7;
+  --fault-border: #d97706;
+
+  --evict: #be123c;
+  --evict-ink: #881337;
+  --evict-bg: #ffe4e6;
+  --evict-border: #e11d48;
+
+  /* Precision Geometry */
+  --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-full: 9999px;
+  --radius-pill: 9999px;
 
-  /* Glows & Shadows */
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
-  --shadow-active: 0 0 20px rgba(56, 189, 248, 0.2);
-  --shadow-cell-hit: 0 0 18px rgba(45, 212, 191, 0.25);
-  --shadow-cell-fault: 0 0 18px rgba(251, 146, 60, 0.25);
+  --shadow-sheet: 0 4px 14px rgba(17, 19, 23, 0.06), 0 1px 3px rgba(17, 19, 23, 0.04);
+  --shadow-control: 0 1px 2px rgba(17, 19, 23, 0.09);
 
-  /* Transitions */
-  --transition-fast: 140ms cubic-bezier(0.2, 0, 0, 1);
-  --transition-normal: 240ms cubic-bezier(0.2, 0, 0, 1);
-  --transition-spring: 360ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Fluid Type Scale (rem only) */
+  --text-xs: 0.78rem;
+  --text-sm: 0.875rem;
+  --text-base: 0.9375rem;
+  --text-md: 1.0625rem;
+  --text-lg: clamp(1.25rem, 1.12rem + 0.65vw, 1.625rem);
+  --text-xl: clamp(1.45rem, 1.2rem + 0.85vw, 2rem);
+
+  /* Motion Choreography Curves (Pure exponential deceleration - zero tacky bounce) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-arrival: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-press: 100ms;
+  --dur-state: 220ms;
+
+  accent-color: var(--accent-primary);
+  scrollbar-color: var(--border-control) var(--bg-recessed);
+  scrollbar-width: auto;
+}
+
+/* Classroom Projector Scale Boost */
+body.is-classroom-scale {
+  --text-xs: 0.875rem;
+  --text-sm: 0.96875rem;
+  --text-base: 1.0625rem;
+  --text-md: 1.1875rem;
 }

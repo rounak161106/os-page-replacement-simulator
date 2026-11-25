@@ -1,290 +1,328 @@
-/**
- * FrameLab — Memory Atlas Comparison Module
- * Runs simultaneous simulations across FIFO, LRU, and Optimal algorithms,
- * renders metrics tables, comparative bar tracks, and fault trajectory curves.
- */
+import { simulate } from './algorithms.js';
 
-import { simulate, ALGORITHMS } from './algorithms.js';
-
-const ALGO_DISPLAY_CONFIG = {
-  [ALGORITHMS.FIFO]: {
-    name: 'FIFO',
-    title: 'First-In, First-Out',
-    color: '#3859D6' // Primary Blue
-  },
-  [ALGORITHMS.LRU]: {
-    name: 'LRU',
-    title: 'Least Recently Used',
-    color: '#087F72' // Scientific Teal
-  },
-  [ALGORITHMS.OPTIMAL]: {
-    name: 'Optimal',
-    title: 'Belady’s MIN (Theoretical)',
-    color: '#8762B8' // Scientific Violet
-  }
-};
+const ALGO_DISPLAY_CONFIG = [
+  { key: 'FIFO', label: 'FIFO (First-In, First-Out)', short: 'FIFO', color: '#b93506', dash: '', marker: 'circle' },
+  { key: 'LRU', label: 'LRU (Least Recently Used)', short: 'LRU', color: '#141518', dash: '7 4', marker: 'square' },
+  { key: 'OPTIMAL', label: 'Optimal (Belady Lookahead)', short: 'OPT', color: '#047857', dash: '2 4', marker: 'diamond' }
+];
 
 export class ComparisonController {
-  /**
-   * @param {object} elements - Container DOM elements
-   */
-  constructor(elements) {
-    this.el = elements;
+  constructor(dom) {
+    this.dom = dom;
+    this.lastSummary = null;
+    this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   }
 
-  /**
-   * Runs all three algorithms on the provided sequence and updates the comparison views.
-   *
-   * @param {number[]} sequence
-   * @param {number} frameCount
-   */
   render(sequence, frameCount) {
-    if (!sequence || sequence.length === 0) {
-      this.renderEmptyState('Enter a valid reference sequence in the Simulator to run comparisons.');
-      return;
+    if (!Array.isArray(sequence) || sequence.length === 0) return;
+
+    if (this.dom.cmpWorkloadBadge) {
+      this.dom.cmpWorkloadBadge.textContent = `${sequence.length} refs · ${frameCount} Frames`;
+    }
+    if (this.dom.cmpNote) {
+      this.dom.cmpNote.textContent = `FIFO, LRU, and Optimal evaluated identically across ${sequence.length} requests in ${frameCount} physical frame${frameCount > 1 ? 's' : ''}.`;
     }
 
-    const algos = [ALGORITHMS.FIFO, ALGORITHMS.LRU, ALGORITHMS.OPTIMAL];
-    const results = algos.map(algo => ({
-      key: algo,
-      config: ALGO_DISPLAY_CONFIG[algo],
-      sim: simulate(algo, sequence, frameCount)
-    }));
+    const total = sequence.length;
+    const rows = ALGO_DISPLAY_CONFIG.map((cfg) => {
+      const sim = simulate(cfg.key, sequence, frameCount);
+      const steps = sim.steps || [];
+      const last = steps[steps.length - 1];
+      const faults = last ? last.cumulativeFaults : 0;
+      const hits = last ? last.cumulativeHits : 0;
+      const replacements = last ? last.cumulativeReplacements : 0;
 
-    // Find lowest fault count
-    const minFaults = Math.min(...results.map(r => r.sim.totalFaults));
+      return {
+        ...cfg,
+        faults,
+        hits,
+        replacements,
+        faultRate: total > 0 ? ((faults / total) * 100) : 0,
+        hitRate: total > 0 ? ((hits / total) * 100) : 0,
+        steps
+      };
+    });
 
-    this.renderSummaryNote(sequence.length, frameCount);
-    this.renderTable(results, minFaults, sequence.length);
-    this.renderBarChartSvg(results, sequence.length);
-    this.renderTrajectorySvg(results, sequence.length);
+    const minFaults = Math.min(...rows.map((r) => r.faults));
+    this.lastSummary = rows;
+
+    this.renderTable(rows, minFaults);
+    this.renderBars(rows);
+    this.renderTrajectorySvg(rows, sequence);
   }
 
-  /**
-   * Renders informational banner above comparison data.
-   *
-   * @param {number} refCount
-   * @param {number} frameCount
-   */
-  renderSummaryNote(refCount, frameCount) {
-    if (!this.el.note) return;
-    this.el.note.textContent = `Compared over ${refCount} page references with ${frameCount} physical memory frames. All figures are dynamically calculated from identical inputs.`;
-  }
+  renderTable(rows, minFaults) {
+    const tbody = this.dom.cmpTable?.querySelector('tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
 
-  /**
-   * Renders the comparative metrics table.
-   *
-   * @param {Array} results
-   * @param {number} minFaults
-   * @param {number} totalRefs
-   */
-  renderTable(results, minFaults, totalRefs) {
-    if (!this.el.table) return;
-
-    const tbody = document.createElement('tbody');
-
-    // Header
-    const thead = document.createElement('thead');
-    thead.innerHTML = `
-      <tr>
-        <th scope="col">Algorithm</th>
-        <th scope="col">Faults</th>
-        <th scope="col">Hits</th>
-        <th scope="col">Fault Rate</th>
-        <th scope="col">Hit Rate</th>
-        <th scope="col">Replacements</th>
-        <th scope="col">Outcome</th>
-      </tr>
-    `;
-
-    results.forEach(r => {
-      const isWinner = r.sim.totalFaults === minFaults;
+    rows.forEach((row) => {
       const tr = document.createElement('tr');
-      if (isWinner) tr.className = 'row-best';
+      const isBest = row.faults === minFaults;
+      if (isBest) tr.classList.add('is-best-row');
 
-      const tdAlgo = document.createElement('td');
-      tdAlgo.className = 'algo-cell';
-      tdAlgo.innerHTML = `
-        <div class="algo-swatch-badge">
-          <span class="algo-swatch-dot" style="background-color: ${r.config.color}"></span>
-          <strong>${r.config.name}</strong>
-        </div>
-      `;
+      const nameTd = document.createElement('td');
+      const nameWrap = document.createElement('div');
+      nameWrap.className = 'algo-name-cell';
 
-      const tdFaults = document.createElement('td');
-      tdFaults.className = 'font-mono bold';
-      tdFaults.textContent = String(r.sim.totalFaults);
+      const dot = document.createElement('span');
+      dot.className = 'policy-dot';
+      dot.style.backgroundColor = row.color;
 
-      const tdHits = document.createElement('td');
-      tdHits.className = 'font-mono';
-      tdHits.textContent = String(r.sim.totalHits);
+      const labelSpan = document.createElement('span');
+      labelSpan.textContent = row.label;
+      nameWrap.append(dot, labelSpan);
 
-      const tdFaultRate = document.createElement('td');
-      tdFaultRate.className = 'font-mono';
-      tdFaultRate.textContent = `${r.sim.faultPercentage.toFixed(1)}%`;
-
-      const tdHitRate = document.createElement('td');
-      tdHitRate.className = 'font-mono';
-      tdHitRate.textContent = `${r.sim.hitPercentage.toFixed(1)}%`;
-
-      const tdReplacements = document.createElement('td');
-      tdReplacements.className = 'font-mono';
-      tdReplacements.textContent = String(r.sim.totalReplacements);
-
-      const tdOutcome = document.createElement('td');
-      if (isWinner) {
-        tdOutcome.innerHTML = `<span class="badge badge-hit">Optimal Baseline</span>`;
-      } else {
-        const delta = r.sim.totalFaults - minFaults;
-        tdOutcome.innerHTML = `<span class="badge badge-neutral">+${delta} vs Best</span>`;
+      if (isBest) {
+        const bestTag = document.createElement('span');
+        bestTag.className = 'best-badge';
+        bestTag.textContent = 'BEST';
+        nameWrap.appendChild(bestTag);
       }
 
-      tr.appendChild(tdAlgo);
-      tr.appendChild(tdFaults);
-      tr.appendChild(tdHits);
-      tr.appendChild(tdFaultRate);
-      tr.appendChild(tdHitRate);
-      tr.appendChild(tdReplacements);
-      tr.appendChild(tdOutcome);
+      nameTd.appendChild(nameWrap);
+
+      const faultsTd = document.createElement('td');
+      faultsTd.textContent = String(row.faults);
+
+      const hitsTd = document.createElement('td');
+      hitsTd.textContent = String(row.hits);
+
+      const repTd = document.createElement('td');
+      repTd.textContent = String(row.replacements);
+
+      const fRateTd = document.createElement('td');
+      fRateTd.textContent = `${row.faultRate.toFixed(1)}%`;
+
+      const hRateTd = document.createElement('td');
+      hRateTd.textContent = `${row.hitRate.toFixed(1)}%`;
+
+      tr.append(nameTd, faultsTd, hitsTd, repTd, fRateTd, hRateTd);
       tbody.appendChild(tr);
     });
-
-    this.el.table.innerHTML = '';
-    this.el.table.appendChild(thead);
-    this.el.table.appendChild(tbody);
   }
 
-  /**
-   * Renders comparative proportional bars.
-   *
-   * @param {Array} results
-   * @param {number} totalRefs
-   */
-  renderBarChartSvg(results, totalRefs) {
-    const container = this.el.barsContainer;
-    if (!container) return;
+  renderBars(rows) {
+    const host = this.dom.cmpBars;
+    if (!host) return;
+    host.innerHTML = '';
 
-    container.innerHTML = '';
+    const layersToAnimate = [];
 
-    results.forEach(r => {
-      const row = document.createElement('div');
-      row.className = 'comp-bar-item';
+    rows.forEach((row, idx) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'cmp-bar-row';
 
-      const label = document.createElement('div');
-      label.className = 'comp-bar-name';
-      label.textContent = r.config.name;
+      const meta = document.createElement('div');
+      meta.className = 'cmp-bar-meta';
+
+      const title = document.createElement('span');
+      title.className = 'cmp-bar-name';
+      title.textContent = row.short;
+
+      const figures = document.createElement('span');
+      figures.className = 'cmp-bar-figures';
+      figures.textContent = `${row.faults} faults (${row.faultRate.toFixed(1)}%) · ${row.hits} hits (${row.hitRate.toFixed(1)}%)`;
+
+      meta.append(title, figures);
 
       const track = document.createElement('div');
-      track.className = 'comp-bar-track-shell';
+      track.className = 'cmp-bar-track';
+      track.setAttribute('role', 'img');
+      track.setAttribute('aria-label', `${row.short}: ${row.faultRate.toFixed(1)} percent faults, ${row.hitRate.toFixed(1)} percent hits`);
 
-      const faultBar = document.createElement('div');
-      faultBar.className = 'comp-bar-fill-fault';
-      faultBar.style.width = '0%';
-      faultBar.setAttribute('aria-label', `${r.config.name} Faults: ${r.sim.totalFaults}`);
+      const faultLayer = document.createElement('div');
+      faultLayer.className = 'cmp-bar-fault-layer';
+      faultLayer.style.transitionDelay = this.reducedMotionQuery.matches ? '0ms' : `${idx * 70}ms`;
+      const targetScale = Math.max(0, Math.min(1, row.faultRate / 100));
+      track.appendChild(faultLayer);
+      layersToAnimate.push({ el: faultLayer, scale: targetScale });
 
-      const hitBar = document.createElement('div');
-      hitBar.className = 'comp-bar-fill-hit';
-      hitBar.style.width = '0%';
-      hitBar.setAttribute('aria-label', `${r.config.name} Hits: ${r.sim.totalHits}`);
+      const caption = document.createElement('div');
+      caption.className = 'cmp-bar-caption';
+      caption.innerHTML = '<span>Amber: Faults</span><span>Green: Hits</span>';
 
-      track.appendChild(faultBar);
-      track.appendChild(hitBar);
+      wrapper.append(meta, track, caption);
+      host.appendChild(wrapper);
+    });
 
-      const readout = document.createElement('div');
-      readout.className = 'comp-bar-readout font-mono';
-      readout.textContent = `${r.sim.faultPercentage.toFixed(1)}% fault`;
-
-      row.appendChild(label);
-      row.appendChild(track);
-      row.appendChild(readout);
-      container.appendChild(row);
-
-      // Animate width
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          faultBar.style.width = `${(r.sim.totalFaults / totalRefs) * 100}%`;
-          hitBar.style.width = `${(r.sim.totalHits / totalRefs) * 100}%`;
-        });
+    requestAnimationFrame(() => {
+      layersToAnimate.forEach(({ el, scale }) => {
+        el.style.transform = `scaleX(${scale.toFixed(4)})`;
       });
     });
   }
 
-  /**
-   * Renders cumulative fault trajectory line chart in SVG matching Memory Atlas styling.
-   *
-   * @param {Array} results
-   * @param {number} totalRefs
-   */
-  renderTrajectorySvg(results, totalRefs) {
-    const svg = this.el.curveSvg;
+  renderTrajectorySvg(rows, sequence) {
+    const svg = this.dom.cmpTrajectorySvg;
     if (!svg) return;
+    svg.innerHTML = '';
 
-    const width = 640;
-    const height = 220;
-    const padding = { top: 24, right: 90, bottom: 28, left: 40 };
-    const chartW = width - padding.left - padding.right;
-    const chartH = height - padding.top - padding.bottom;
+    const NS = 'http://www.w3.org/2000/svg';
+    const W = 760;
+    const H = 270;
+    const padL = 44;
+    const padR = 24;
+    const padT = 22;
+    const padB = 34;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
 
-    const maxFaults = Math.max(1, ...results.map(r => r.sim.totalFaults));
+    const totalSteps = sequence.length;
+    const maxFaults = Math.max(1, ...rows.map((r) => r.faults));
+    const reduceMotion = this.reducedMotionQuery.matches;
 
-    const getX = stepIdx => padding.left + ((stepIdx + 1) / totalRefs) * chartW;
-    const getY = faults => padding.top + chartH - (faults / maxFaults) * chartH;
+    const getX = (stepIdx) => padL + (totalSteps <= 1 ? plotW / 2 : (stepIdx / (totalSteps - 1)) * plotW);
+    const getY = (faultCount) => padT + plotH - (faultCount / maxFaults) * plotH;
 
-    let gridLinesSvg = `
-      <line x1="${padding.left}" y1="${getY(0)}" x2="${padding.left + chartW}" y2="${getY(0)}" stroke="var(--border)" stroke-width="1"/>
-      <line x1="${padding.left}" y1="${getY(maxFaults)}" x2="${padding.left + chartW}" y2="${getY(maxFaults)}" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
-    `;
+    const ticks = Math.min(5, maxFaults);
+    for (let t = 0; t <= ticks; t += 1) {
+      const val = Math.round((t / ticks) * maxFaults);
+      const y = getY(val);
 
-    const linesSvg = results.map((r, j) => {
-      const points = [`${padding.left},${getY(0)}`];
-      r.sim.steps.forEach((step, idx) => {
-        points.push(`${getX(idx).toFixed(1)},${getY(step.cumulativeFaults).toFixed(1)}`);
+      const grid = document.createElementNS(NS, 'line');
+      grid.setAttribute('x1', String(padL));
+      grid.setAttribute('y1', y.toFixed(1));
+      grid.setAttribute('x2', String(W - padR));
+      grid.setAttribute('y2', y.toFixed(1));
+      grid.setAttribute('stroke', t === 0 ? '#64748b' : '#d8e1ee');
+      grid.setAttribute('stroke-width', '1');
+      svg.appendChild(grid);
+
+      const label = document.createElementNS(NS, 'text');
+      label.setAttribute('x', String(padL - 8));
+      label.setAttribute('y', (y + 4).toFixed(1));
+      label.setAttribute('text-anchor', 'end');
+      label.setAttribute('fill', '#475569');
+      label.setAttribute('font-family', 'JetBrains Mono, monospace');
+      label.setAttribute('font-size', '11');
+      label.setAttribute('font-weight', '600');
+      label.textContent = String(val);
+      svg.appendChild(label);
+    }
+
+    const labelEvery = totalSteps > 18 ? 2 : 1;
+    sequence.forEach((page, idx) => {
+      if (idx % labelEvery !== 0 && idx !== totalSteps - 1) return;
+      const x = getX(idx);
+      const label = document.createElementNS(NS, 'text');
+      label.setAttribute('x', x.toFixed(1));
+      label.setAttribute('y', String(H - 10));
+      label.setAttribute('text-anchor', 'middle');
+      label.setAttribute('fill', '#475569');
+      label.setAttribute('font-family', 'JetBrains Mono, monospace');
+      label.setAttribute('font-size', '11');
+      label.setAttribute('font-weight', '600');
+      label.textContent = `${idx + 1}:P${page}`;
+      svg.appendChild(label);
+    });
+
+    rows.forEach((row, seriesIdx) => {
+      const pts = row.steps.map((s, idx) => `${getX(idx).toFixed(1)},${getY(s.cumulativeFaults).toFixed(1)}`).join(' ');
+      const poly = document.createElementNS(NS, 'polyline');
+      poly.setAttribute('points', pts);
+      poly.setAttribute('fill', 'none');
+      poly.setAttribute('stroke', row.color);
+      poly.setAttribute('stroke-width', '2.75');
+      if (row.dash) poly.setAttribute('stroke-dasharray', row.dash);
+      poly.setAttribute('stroke-linejoin', 'round');
+      svg.appendChild(poly);
+
+      // Animate continuous solid stroke drawing progressively left-to-right
+      if (!reduceMotion && typeof poly.getTotalLength === 'function' && !row.dash) {
+        const len = poly.getTotalLength();
+        if (len > 0) {
+          if (typeof window.gsap !== 'undefined') {
+            window.gsap.fromTo(
+              poly,
+              { strokeDasharray: len, strokeDashoffset: len },
+              { strokeDashoffset: 0, duration: 0.65, delay: seriesIdx * 0.1, ease: 'power2.out' }
+            );
+          } else {
+            poly.animate(
+              [
+                { strokeDasharray: `${len}`, strokeDashoffset: `${len}` },
+                { strokeDasharray: `${len}`, strokeDashoffset: '0' }
+              ],
+              { duration: 550, delay: seriesIdx * 90, easing: 'cubic-bezier(0.23, 1, 0.32, 1)', fill: 'backwards' }
+            );
+          }
+        }
+      }
+
+      row.steps.forEach((s, idx) => {
+        const cx = getX(idx);
+        const cy = getY(s.cumulativeFaults);
+        let marker;
+        if (row.marker === 'square') {
+          marker = document.createElementNS(NS, 'rect');
+          marker.setAttribute('x', (cx - 3.5).toFixed(1));
+          marker.setAttribute('y', (cy - 3.5).toFixed(1));
+          marker.setAttribute('width', '7');
+          marker.setAttribute('height', '7');
+        } else if (row.marker === 'diamond') {
+          marker = document.createElementNS(NS, 'polygon');
+          const d = 4.6;
+          marker.setAttribute('points', `${cx},${cy - d} ${cx + d},${cy} ${cx},${cy + d} ${cx - d},${cy}`);
+        } else {
+          marker = document.createElementNS(NS, 'circle');
+          marker.setAttribute('cx', cx.toFixed(1));
+          marker.setAttribute('cy', cy.toFixed(1));
+          marker.setAttribute('r', '4');
+        }
+        marker.setAttribute('fill', row.color);
+        marker.setAttribute('stroke', '#ffffff');
+        marker.setAttribute('stroke-width', '1.5');
+        svg.appendChild(marker);
+      });
+    });
+
+    const crosshair = document.createElementNS(NS, 'line');
+    crosshair.setAttribute('y1', String(padT));
+    crosshair.setAttribute('y2', String(H - padB));
+    crosshair.setAttribute('class', 'cmp-crosshair-line');
+    svg.appendChild(crosshair);
+
+    const sliceW = totalSteps <= 1 ? plotW : plotW / (totalSteps - 1);
+    sequence.forEach((page, idx) => {
+      const cx = getX(idx);
+      const rect = document.createElementNS(NS, 'rect');
+      rect.setAttribute('x', Math.max(padL - sliceW / 2, cx - sliceW / 2).toFixed(1));
+      rect.setAttribute('y', String(padT));
+      rect.setAttribute('width', sliceW.toFixed(1));
+      rect.setAttribute('height', String(plotH));
+      rect.setAttribute('class', 'cmp-step-hotspot');
+      rect.setAttribute('tabindex', '0');
+
+      const summaryParts = rows.map((r) => `${r.short}: ${r.steps[idx]?.cumulativeFaults ?? 0}`);
+      const readoutText = `Step ${idx + 1} (Page ${page}) · ${summaryParts.join(' · ')}`;
+      rect.setAttribute('aria-label', readoutText);
+
+      const activate = () => {
+        crosshair.setAttribute('x1', cx.toFixed(1));
+        crosshair.setAttribute('x2', cx.toFixed(1));
+        crosshair.classList.add('is-active');
+        if (this.dom.cmpChartReadout) {
+          this.dom.cmpChartReadout.textContent = readoutText;
+        }
+      };
+
+      const deactivate = () => {
+        crosshair.classList.remove('is-active');
+      };
+
+      rect.addEventListener('mouseenter', activate);
+      rect.addEventListener('focus', activate);
+      rect.addEventListener('mouseleave', deactivate);
+      rect.addEventListener('blur', deactivate);
+      rect.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          deactivate();
+          rect.blur();
+        }
       });
 
-      const finalFaults = r.sim.totalFaults;
-      const finalX = getX(totalRefs - 1);
-      const finalY = getY(finalFaults);
-      const labelYOffset = (j - 1) * 16;
-
-      return `
-        <polyline
-          class="crv"
-          pathLength="1"
-          points="${points.join(' ')}"
-          fill="none"
-          stroke="${r.config.color}"
-          stroke-width="2.2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          style="animation-delay: ${j * 0.15}s"
-        />
-        <circle cx="${finalX.toFixed(1)}" cy="${finalY.toFixed(1)}" r="4.5" fill="${r.config.color}" stroke="var(--surface)" stroke-width="2"/>
-        <text
-          x="${finalX + 8}"
-          y="${(finalY + 4 + labelYOffset).toFixed(1)}"
-          fill="${r.config.color}"
-          font-size="11"
-          font-weight="700"
-          font-family="var(--font-mono)"
-        >${r.config.name}: ${finalFaults}</text>
-      `;
-    }).join('');
-
-    svg.innerHTML = `
-      <g>
-        ${gridLinesSvg}
-        ${linesSvg}
-        <text x="${padding.left - 8}" y="${getY(0) + 4}" text-anchor="end" fill="var(--text-secondary)" font-size="10" font-family="var(--font-mono)">0</text>
-        <text x="${padding.left - 8}" y="${getY(maxFaults) + 4}" text-anchor="end" fill="var(--text-secondary)" font-size="10" font-family="var(--font-mono)">${maxFaults}</text>
-        <text x="${padding.left + chartW / 2}" y="${height - 6}" text-anchor="middle" fill="var(--text-tertiary)" font-size="10">Page Reference Sequence Progress &rarr;</text>
-      </g>
-    `;
-  }
-
-  renderEmptyState(message) {
-    if (this.el.note) this.el.note.textContent = message;
-    if (this.el.table) this.el.table.innerHTML = '';
-    if (this.el.barsContainer) this.el.barsContainer.innerHTML = '';
-    if (this.el.curveSvg) this.el.curveSvg.innerHTML = '';
+      svg.appendChild(rect);
+    });
   }
 }

@@ -1,106 +1,141 @@
-/**
- * FrameLab — Memory Atlas Motion System
- * Meaningful physical transitions for page insertion, hits, faults, and evictions.
- */
-
-/* Page Hit: Restrained Teal Glow */
-.anim-pulse-hit {
-  animation: hitGlow 400ms cubic-bezier(0.2, 0, 0, 1);
+/* Directional View Transitions */
+::view-transition-group(root) {
+  animation-duration: 240ms;
+  animation-timing-function: var(--ease-out);
 }
 
-@keyframes hitGlow {
-  0% {
-    transform: scale(0.97);
-  }
-  50% {
-    transform: scale(1.03);
-    box-shadow: 0 0 0 6px rgba(8, 127, 114, 0.2);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: none;
-  }
+html:active-view-transition-type(forward)::view-transition-old(root) {
+  animation: vt-out-left 200ms var(--ease-out) both;
 }
 
-/* Page Insertion / Fault: Warm Transition */
-.anim-drop-in {
-  animation: pageInsertion 380ms cubic-bezier(0.16, 1, 0.3, 1);
+html:active-view-transition-type(forward)::view-transition-new(root) {
+  animation: vt-in-right 240ms var(--ease-out) both;
 }
 
-@keyframes pageInsertion {
-  0% {
-    transform: translateY(-10px);
-    opacity: 0.4;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+html:active-view-transition-type(backward)::view-transition-old(root) {
+  animation: vt-out-right 200ms var(--ease-out) both;
 }
 
-/* Eviction Archive Chip Entrance */
-.archive-chip.latest-eviction {
-  animation: evictionPop 300ms cubic-bezier(0.2, 0, 0, 1);
+html:active-view-transition-type(backward)::view-transition-new(root) {
+  animation: vt-in-left 240ms var(--ease-out) both;
 }
 
-@keyframes evictionPop {
-  from {
-    transform: translateY(-6px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+@keyframes vt-out-left {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-16px); }
 }
 
-/* Trajectory Curve Stroke Animation */
-.crv {
-  fill: none;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  animation: drawStroke 1.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+@keyframes vt-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-@keyframes drawStroke {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
+@keyframes vt-out-right {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(16px); }
 }
 
-/* Section Change Transition */
-.section-fade-in {
-  animation: sectionReveal 200ms ease-out;
+@keyframes vt-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-@keyframes sectionReveal {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.view-section.section-enter {
+  animation: section-enter 220ms var(--ease-out);
 }
 
-/* Prefers Reduced Motion */
+@keyframes section-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Gentle Invalid Feedback Shake (Only on Form Error Submit) */
+.is-shaking {
+  animation: input-shake 240ms var(--ease-out);
+}
+
+@keyframes input-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+}
+
+/* Metric Slot Tick & Delta Confirmation */
+.kpi-value.is-ticking {
+  animation: kpi-tick 260ms var(--ease-expo);
+}
+
+@keyframes kpi-tick {
+  from { opacity: 0.4; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.metric-delta.is-visible {
+  animation: delta-pop 900ms var(--ease-out) forwards;
+}
+
+@keyframes delta-pop {
+  0% { opacity: 0; transform: translateY(4px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-3px); }
+}
+
+/* Matrix Cell Reveal */
+.matrix-status-cell.is-just-revealed {
+  animation: matrix-badge-pop 240ms var(--ease-out);
+}
+
+@keyframes matrix-badge-pop {
+  from { opacity: 0.45; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Belady Stagger Reveal */
+.belady-result-box.is-revealing .belady-case {
+  animation: belady-reveal 260ms var(--ease-out) backwards;
+}
+
+.belady-result-box.is-revealing .belady-case:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+@keyframes belady-reveal {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
+  html:active-view-transition-type(forward)::view-transition-old(root),
+  html:active-view-transition-type(forward)::view-transition-new(root),
+  html:active-view-transition-type(backward)::view-transition-old(root),
+  html:active-view-transition-type(backward)::view-transition-new(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-name: vt-fade-only;
+    animation-duration: 120ms;
   }
 
-  .stream-token.active-token {
-    transform: none !important;
+  .view-section.section-enter,
+  .is-shaking,
+  .kpi-value.is-ticking,
+  .matrix-status-cell.is-just-revealed,
+  .belady-result-box.is-revealing .belady-case {
+    animation: none;
   }
+
+  .nav-active-rail,
+  .algo-active-pill,
+  .progress-fill,
+  .cmp-bar-fault-layer,
+  .toast-region {
+    transition-duration: 120ms;
+    transition-property: opacity, background-color, border-color, color;
+  }
+}
+
+@keyframes vt-fade-only {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
 }

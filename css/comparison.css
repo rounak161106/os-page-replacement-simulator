@@ -1,154 +1,209 @@
-/**
- * FrameLab — Scientific Laboratory Comparison Styles
- * Comparative metrics table, proportional SVG fault/hit bars,
- * and multi-algorithm fault accumulation trajectories.
- */
-
-.comparison-workspace {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  box-shadow: var(--shadow-card);
-  margin-bottom: var(--space-6);
+.compare-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  gap: 0.875rem;
 }
 
-.comparison-note {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  margin-bottom: var(--space-4);
-  line-height: 1.5;
+.compare-layout .studio-sheet {
+  padding: 1rem 1.125rem;
 }
 
-/* Results Table */
-.comparison-table-wrapper {
+.cmp-chart-card {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-scroll {
   overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: rgba(0, 0, 0, 0.25);
 }
 
-.comparison-table {
+.cmp-table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--text-sm);
-  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
-.comparison-table th,
-.comparison-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.comparison-table th:first-child,
-.comparison-table td:first-child {
+.cmp-table th,
+.cmp-table td {
+  padding: 0.625rem 0.75rem;
   text-align: left;
+  border-bottom: 1px solid var(--seam);
 }
 
-.comparison-table th {
-  background-color: var(--surface-secondary);
-  color: var(--text-secondary);
-  font-weight: 700;
+.cmp-table th {
   font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.comparison-table td {
-  font-family: var(--font-mono);
-  color: var(--ink);
-}
-
-.comparison-table tr:hover td {
-  background-color: rgba(255, 255, 255, 0.03);
-}
-
-.comparison-table tr.row-best td {
-  background-color: var(--hit-soft);
-}
-
-.comparison-table tr.row-best td.algo-cell {
-  font-weight: 800;
-  color: var(--hit);
-}
-
-.algo-cell {
-  font-family: var(--font-sans) !important;
   font-weight: 700;
-  font-size: var(--text-base);
+  color: var(--ink-secondary);
+  background-color: var(--bg-canvas);
 }
 
-.algo-swatch-badge {
+.cmp-table td {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+.cmp-table td:first-child {
+  font-family: var(--font-sans);
+  font-weight: 700;
+}
+
+.cmp-table tr.is-best-row {
+  background-color: var(--hit-bg);
+}
+
+.algo-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.policy-dot {
+  width: 0.5625rem;
+  height: 0.5625rem;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.best-badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  padding: 0.125rem 0.4375rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: var(--hit);
+  border-radius: var(--radius-xs);
 }
 
-.algo-swatch-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-/* Proportional Ratio Bars */
-.comp-bars-wrapper {
+/* Staggered GPU Ratio Bars */
+.cmp-bars-container {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  margin-top: var(--space-4);
+  gap: 0.875rem;
 }
 
-.comp-bar-item {
-  display: grid;
-  grid-template-columns: 100px 1fr 70px;
-  align-items: center;
-  gap: var(--space-4);
+.cmp-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem;
 }
 
-.comp-bar-name {
+.cmp-bar-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cmp-bar-name {
   font-weight: 700;
   font-size: var(--text-sm);
-  color: var(--ink);
+  color: var(--ink-primary);
 }
 
-.comp-bar-track-shell {
-  height: 22px;
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: var(--radius-xs);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  display: flex;
-}
-
-.comp-bar-fill-fault {
-  background-color: var(--fault);
-  height: 100%;
-  transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.comp-bar-fill-hit {
-  background-color: var(--hit);
-  height: 100%;
-  transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.comp-bar-readout {
+.cmp-bar-figures {
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--text-secondary);
-  text-align: right;
+  color: var(--ink-secondary);
 }
 
-/* Cumulative Trajectory Chart Card */
-.trajectory-card {
-  margin-top: var(--space-6);
+.cmp-bar-track {
+  position: relative;
+  height: 1rem;
+  background-color: var(--hit-bg);
+  border: 1px solid var(--border-sheet);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
 }
 
-.trajectory-svg {
+.cmp-bar-fault-layer {
   width: 100%;
-  height: 220px;
+  height: 100%;
+  background-color: var(--fault);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 420ms var(--ease-out);
+}
+
+.cmp-bar-caption {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.cmp-chart-head {
+  gap: 0.875rem;
+}
+
+.cmp-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+}
+
+.line-sample {
+  width: 1.5rem;
+  height: 0;
+  border-top: 2.5px solid currentColor;
+}
+
+.sample-fifo { color: var(--accent-primary); border-top-style: solid; }
+.sample-lru { color: var(--secondary-trace); border-top-style: dashed; }
+.sample-opt { color: var(--hit); border-top-style: dotted; }
+
+.cmp-chart-host {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  padding: 0.75rem;
+  background-color: var(--bg-canvas);
+  border: 1px solid var(--seam);
+  border-radius: var(--radius-sm);
+}
+
+.cmp-trajectory-svg {
+  width: 100%;
+  height: auto;
+  min-height: 15rem;
+  max-height: 26rem;
   display: block;
-  margin-top: var(--space-3);
+}
+
+.cmp-crosshair-line {
+  stroke: var(--accent-primary);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-press) var(--ease-out);
+}
+
+.cmp-crosshair-line.is-active {
+  opacity: 0.9;
+}
+
+.cmp-step-hotspot {
+  fill: transparent;
+  cursor: crosshair;
+}
+
+.cmp-step-hotspot:focus {
+  outline: none;
+}
+
+.cmp-step-hotspot:focus-visible {
+  fill: rgba(185, 53, 6, 0.14);
 }

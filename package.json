@@ -1,12 +1,12 @@
 {
   "name": "framelab",
   "version": "1.0.0",
-  "description": "FrameLab — Autonomous Interactive Page Replacement Algorithm Simulator (FIFO, LRU, Optimal)",
+  "description": "FrameLab — Interactive Page Replacement Algorithm Simulator (FIFO, LRU, Optimal) with Same-Wi-Fi Presenter Remote",
   "type": "module",
   "main": "js/main.js",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "start": "npx serve -l 3000 ."
+    "start": "node server.js"
   },
   "keywords": [
     "operating-systems",
